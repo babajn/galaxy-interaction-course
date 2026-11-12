@@ -1,0 +1,378 @@
+{
+  "tests_passed": 93,
+  "tests_failed": 0,
+  "checks": [
+    {
+      "name": "assembly: shape",
+      "passed": true
+    },
+    {
+      "name": "assembly: origin length",
+      "passed": true
+    },
+    {
+      "name": "assembly: group sizes",
+      "passed": true
+    },
+    {
+      "name": "assembly: fixed order",
+      "passed": true
+    },
+    {
+      "name": "assembly: repeatable initial state",
+      "passed": true
+    },
+    {
+      "name": "assembly: repeatable labels and radii",
+      "passed": true
+    },
+    {
+      "name": "assembly: center-of-mass position",
+      "passed": true
+    },
+    {
+      "name": "assembly: center-of-mass velocity",
+      "passed": true
+    },
+    {
+      "name": "placement: radii",
+      "passed": true
+    },
+    {
+      "name": "placement: circular speed",
+      "passed": true
+    },
+    {
+      "name": "placement: zero radial velocity",
+      "passed": true
+    },
+    {
+      "name": "placement: spin signs",
+      "passed": true
+    },
+    {
+      "name": "placement: local bounds",
+      "passed": true
+    },
+    {
+      "name": "placement: no input overwrite",
+      "passed": true
+    },
+    {
+      "name": "placement: inverse transformation",
+      "passed": true
+    },
+    {
+      "name": "trapezoid: constant on nonuniform grid",
+      "passed": true
+    },
+    {
+      "name": "trapezoid: affine on nonuniform grid",
+      "passed": true
+    },
+    {
+      "name": "CDF: endpoints",
+      "passed": true
+    },
+    {
+      "name": "CDF: strictly increasing",
+      "passed": true
+    },
+    {
+      "name": "CDF: analytic reference",
+      "passed": true
+    },
+    {
+      "name": "CDF: inverse endpoints",
+      "passed": true
+    },
+    {
+      "name": "CDF: repeated grid rejected",
+      "passed": true
+    },
+    {
+      "name": "CDF: zero normalization range rejected",
+      "passed": true
+    },
+    {
+      "name": "CDF: nonpositive count rejected",
+      "passed": true
+    },
+    {
+      "name": "disk: invalid spin rejected",
+      "passed": true
+    },
+    {
+      "name": "encounter: incoming",
+      "passed": true
+    },
+    {
+      "name": "encounter: zero specific energy",
+      "passed": true
+    },
+    {
+      "name": "encounter: specified turning point",
+      "passed": true
+    },
+    {
+      "name": "encounter: point-mass limit",
+      "passed": true
+    },
+    {
+      "name": "encounter: invalid distances 0.0,8.0",
+      "passed": true
+    },
+    {
+      "name": "encounter: invalid distances 8.0,8.0",
+      "passed": true
+    },
+    {
+      "name": "encounter: invalid distances 8.0,10.0",
+      "passed": true
+    },
+    {
+      "name": "encounter: invalid distances 60.0,-1.0",
+      "passed": true
+    },
+    {
+      "name": "encounter: invalid distances nan,8.0",
+      "passed": true
+    },
+    {
+      "name": "encounter: negative b",
+      "passed": true
+    },
+    {
+      "name": "model: invalid mass count",
+      "passed": true
+    },
+    {
+      "name": "model: negative scale",
+      "passed": true
+    },
+    {
+      "name": "model: nonfinite mass",
+      "passed": true
+    },
+    {
+      "name": "force: output shape",
+      "passed": true
+    },
+    {
+      "name": "force: center pair only",
+      "passed": true
+    },
+    {
+      "name": "force: unequal-mass action reaction",
+      "passed": true
+    },
+    {
+      "name": "force: unequal accelerations",
+      "passed": true
+    },
+    {
+      "name": "force: center independence of tracers",
+      "passed": true
+    },
+    {
+      "name": "force: tracer independence of other tracers",
+      "passed": true
+    },
+    {
+      "name": "force: sum of both fields",
+      "passed": true
+    },
+    {
+      "name": "force: center field finite",
+      "passed": true
+    },
+    {
+      "name": "force: arbitrary translation",
+      "passed": true
+    },
+    {
+      "name": "force: central inversion",
+      "passed": true
+    },
+    {
+      "name": "force: label exchange",
+      "passed": true
+    },
+    {
+      "name": "force: coincident softened centers",
+      "passed": true
+    },
+    {
+      "name": "force: coincident unsoftened centers",
+      "passed": true
+    },
+    {
+      "name": "force: pair potential derivative body 0",
+      "passed": true
+    },
+    {
+      "name": "force: pair potential derivative body 1",
+      "passed": true
+    },
+    {
+      "name": "force: tracer potential gradient component 0",
+      "passed": true
+    },
+    {
+      "name": "force: tracer potential gradient component 1",
+      "passed": true
+    },
+    {
+      "name": "KDK: force cache count",
+      "passed": true
+    },
+    {
+      "name": "KDK: saved final nonmultiple",
+      "passed": true
+    },
+    {
+      "name": "KDK: center time count",
+      "passed": true
+    },
+    {
+      "name": "KDK: center/full history synchronization",
+      "passed": true
+    },
+    {
+      "name": "KDK: input unchanged",
+      "passed": true
+    },
+    {
+      "name": "KDK: save interval does not change final state",
+      "passed": true
+    },
+    {
+      "name": "KDK: center history independent of save interval",
+      "passed": true
+    },
+    {
+      "name": "KDK: center trajectory independent of tracers",
+      "passed": true
+    },
+    {
+      "name": "KDK: inverse step",
+      "passed": true
+    },
+    {
+      "name": "KDK: new acceleration is cached",
+      "passed": true
+    },
+    {
+      "name": "KDK: invalid step count 0",
+      "passed": true
+    },
+    {
+      "name": "KDK: invalid step count -1",
+      "passed": true
+    },
+    {
+      "name": "KDK: invalid step count 3.5",
+      "passed": true
+    },
+    {
+      "name": "KDK: invalid step count True",
+      "passed": true
+    },
+    {
+      "name": "KDK: wrong state shape",
+      "passed": true
+    },
+    {
+      "name": "KDK: missing center row",
+      "passed": true
+    },
+    {
+      "name": "KDK: NaN state",
+      "passed": true
+    },
+    {
+      "name": "KDK: zero output interval",
+      "passed": true
+    },
+    {
+      "name": "KDK: nonfinite final time",
+      "passed": true
+    },
+    {
+      "name": "diagnostics: separation",
+      "passed": true
+    },
+    {
+      "name": "diagnostics: momentum",
+      "passed": true
+    },
+    {
+      "name": "diagnostics: center of mass",
+      "passed": true
+    },
+    {
+      "name": "diagnostics: angular momentum",
+      "passed": true
+    },
+    {
+      "name": "diagnostics: energy one pair",
+      "passed": true
+    },
+    {
+      "name": "diagnostics: zero-energy encounter normalization",
+      "passed": true
+    },
+    {
+      "name": "diagnostics: moving-potential energy rate sign",
+      "passed": true
+    },
+    {
+      "name": "origin: radii use fixed parent",
+      "passed": true
+    },
+    {
+      "name": "origin: outer fraction normalizes each group",
+      "passed": true
+    },
+    {
+      "name": "control: translating isolated circles",
+      "passed": true
+    },
+    {
+      "name": "control: translating centers",
+      "passed": true
+    },
+    {
+      "name": "interaction: reverse positions",
+      "passed": true
+    },
+    {
+      "name": "interaction: reverse velocities",
+      "passed": true
+    },
+    {
+      "name": "interaction: center momentum",
+      "passed": true
+    },
+    {
+      "name": "interaction: center angular momentum",
+      "passed": true
+    },
+    {
+      "name": "interaction: center energy accuracy",
+      "passed": true
+    },
+    {
+      "name": "interaction: pericenter",
+      "passed": true
+    },
+    {
+      "name": "retrograde: centers unchanged",
+      "passed": true
+    },
+    {
+      "name": "retrograde: other disk unchanged",
+      "passed": true
+    }
+  ]
+}

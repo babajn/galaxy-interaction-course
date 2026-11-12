@@ -1,0 +1,23 @@
+{
+  "master_sha256": "07755135d567dce611746cf3394aeec81b3df6371dd1c1c3d4f5733861461130",
+  "regions": {
+    "parameters": "737e5c2f7465ba44165ba96375f1f8f7f2565cd3b1924b4b408279f94902b8a5",
+    "plummer-model": "8fceb7b8ff434c1888cd5c5e463d16dee612062b96463458526398972320a037",
+    "trapezoid": "40007f8f39cd50ca66851d306294fd05b5ec78235ef1cc472606453464787286",
+    "mass-table": "d197de87fc5c5e3b0856532f2b6ff3aa1c106a9630ac93139f2cd987aaaf18b7",
+    "mass-convergence": "bd63f0f29eede60290a36740523197a748501c7a8f94bbb8ef631743b0eb1a7a",
+    "mass-at-radius": "320e57eec09f9f44e5ab12f0c6aaa82ee8aca06d181300de4ab69d768c98eb8a",
+    "bisection": "c9e458387b48587db3ebaaee366f9d072152e4b07567a88a3fee0351dfabb80b",
+    "half-mass": "2591149c0fcc201ec9089e600f16d770bad5f93b758b5734dd8f5c458b47bce3",
+    "root-convergence": "29ffab19d3f183466aa8f49d4c607833871d43c2aae8a091f79bbe1b19ab904e",
+    "acceleration-scalar": "8fbc3eca1b7bba6698b4f4d13afdcb62877315171416e26c4eb6fedb89792bf3",
+    "acceleration-plummer": "d606f8fb7751ac6a9370257b74a3381d2af0bdbe74ff89b14e7ee67b27ab52af",
+    "orbit-parameters": "3fb1e5a615cb66319b5b25fb757fe5e0815df887f4e66fe45c9db3271b10fa76",
+    "initial-state": "120d049c85954cefc3c129238c2bffff74433ba8f0520618be51c444b5d35777",
+    "leapfrog-step": "8903cca915c96fcd41048a7f1344ccffdf0b529397d0fc096d1aaf23e4dc3f9a",
+    "integrate-leapfrog": "38be2af4afd01527175ca75a39729bd374e2b3955f1fb7e03ac7bf6487359666",
+    "run-orbits": "6d5b9c390e05461e2daccb0fa5aa2a9a2bb9b70b40b20b5b7010992ee2e8f46d",
+    "diagnostics": "b37d7a9cd696597160aaa648f8413f701cf928b5442b759cfa1edd86d287b25c",
+    "orbit-convergence": "522fa5901eca0e2b2d8a657a47d36b5ac18509f63ae49b242ccb27680b5099f6"
+  }
+}

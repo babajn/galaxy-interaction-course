@@ -1,0 +1,23 @@
+{
+  "master_sha256": "19adaae10acbd6169ec8762995cba49b239bd62299609bd29f0cc0c2097c2ee0",
+  "regions": {
+    "parameters": "7da1aba5ec97afaea73785ebd9eac2267ce1db4e5d9f7e3abe7f1ae6e9425022",
+    "disk-cdf": "97beefe802667e02390a5c6bbc7469c40cbfe8d7c48f6d61614e99721d314549",
+    "make-disk": "922e1ba17b6fb9de28a37f72d5d4b96b2b33da6dd7d292701889e437a51a8340",
+    "moving-plummer": "39a9e4d62712886d24c548438b3c0fd14c70b6f25f08e7a18b26749ec8f7c3e6",
+    "center-acceleration": "6665689115f0ee6f281ce25fa4c541d16cf4e396c24b8c305b00e137206f0022",
+    "system-acceleration": "c354f8757047cb11c491dc21a62fb7a71379967ac7c1f5008bb17ce7fba34cc3",
+    "encounter-initial": "bf1ab8efb55d9a0708b7c5d453107941bea4bfd1aaa859f59d903ed3730ede95",
+    "place-disk": "14cb24963c2f90d0b68cedaca82de951110b75f1935ba2443e6991341533c81f",
+    "assemble-state": "9de937cff3f819f93cab3be8637fca95a08771cbba3a1098b19320b2e893d98f",
+    "leapfrog-step": "185cfc9b6e5ca56348cb93a31bd9b6efcc081126889e5f99fe7226939b7e79ef",
+    "integrate-leapfrog": "ea32b32c996e85638ec98003444ebe1502be50510ff2d2ffd7ae423d479a981f",
+    "center-diagnostics": "d6521040dccfd60cd6919199007371742bc180a695b0cf4c98e8e8bf297cda68",
+    "plot-snapshot": "14c236228e49d999cde66a2527e4ff495882bac964f7f4ed227d6fc88fa0ab84",
+    "outer-fraction": "9feab9b150f5a37c0c5cd1aed59966adbd75698758150893611906f368f1b950",
+    "tracer-energy": "08aec6d22e9b15a69f3f74b22e2a32ac07a6584533f9a922cafbd365af7ee485",
+    "time-convergence": "ba6518520975fddb61fc83e1691d5a1b0e73e67121764562e7846e00aa3eae58",
+    "exercise-boost": "5a1fbd42b74e8f790ab73e61adebc7aa094df0e48f4470e1f9c4ed3176e967d3",
+    "exercise-retrograde": "74dc340579f516d46c6fa706400f39245601adff5137782d487e0d85cfe295bd"
+  }
+}

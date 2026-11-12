@@ -1,0 +1,200 @@
+\chapter{演習の解答・着眼点}
+\markboth{演習の解答・着眼点}{}
+\label{chap:answers}
+第1章から第7章の演習について、数値的な答えと考えるべき点をまとめます。完全なPythonコードは完成版Notebookで確認してください。条件を変更した場合は、ここに示す標準値をそのまま期待値にせず、その条件で計算と確認をやり直してください。
+
+
+\answerchapter{1}{Pythonで天体の運動を計算する}
+
+\paragraph{1.1}
+$v_c=\chonevalVc\unit{km\,s^{-1}}\simeq\chonevalVcInternal\unit{kpc\,Gyr^{-1}}$、$T=\chonevalPeriod\unit{Gyr}$です。
+比エネルギーは$\varepsilon_0=\chonevalEnergy\unit{kpc^2\,Gyr^{-2}}$、
+比角運動量は$\ell_{z,0}=\chonevalAngular\unit{kpc^2\,Gyr^{-1}}$です。
+
+\paragraph{1.2}
+最初のkickには$\avec(\rvec^n)$、最後のkickには$\avec(\rvec^{n+1})$を使います。
+最後の加速度を再利用するので、初回1回と各ステップ1回の計201回です。
+$\vvec^{n+1/2}$を使うと位置と速度の時刻がそろいません。
+整数時刻の速度は、最後の半kickを加えた$\vvec^{n+1}$です。
+
+\paragraph{1.3}
+評価時刻はどちらも$t_n+\Delta t/2$ですが、予測状態はそれぞれ
+$\yvec^n+(\Delta t/2)\kvec_1$と$\yvec^n+(\Delta t/2)\kvec_2$です。
+第2段階では、位置の変化率にも式\eqref{eq:ch1-stage-two}で予測した速度を使います。
+
+\paragraph{1.4}
+leapfrogの最大位置誤差は順に$\choneexLfFifty$、$\choneexLfHundred$、$\choneexLfTwoHundred$でした。
+RK4では$\choneexRkFifty$、$\choneexRkHundred$、$\choneexRkTwoHundred$でした。
+細かい刻み側へ進むと、誤差比はそれぞれ4と16へ近づきます。
+図がほぼ重なっても、同じ時刻の位置を比べれば差を測れます。
+
+\paragraph{1.5}
+軌道は$x$軸について鏡映され、回転方向が逆になります。
+エネルギーは同じで、角運動量は符号が反転します。
+この対称性は、成分と符号を正しく扱っているかを確認する方法にもなります。
+
+\paragraph{1.6}
+KDKは799ステップ、RK4は200ステップです。
+位置誤差はそれぞれ$\chonecostLfPos$と$\chonecostRkPos$でした。
+同じ時間刻みでの比較とは異なり、ここでは力評価回数をそろえて刻みを変えています。
+力評価が少ないことだけから、同じコストでの精度まで決まるわけではありません。
+
+\Needspace{7\baselineskip}
+\paragraph{1.7}
+$\gamma>0$なら$d\varepsilon/dt\le0$です。
+今回の条件では$\varepsilon(T)/|\varepsilon(0)|\simeq\choneexDragEnergy$となりました。
+初期値の$-1$より小さく、エネルギーが減っています。
+これは抵抗がする仕事による変化で、保存系の数値誤差とは区別します。
+解答の完全なコードは完成版Notebookで確認できます。
+
+
+\answerchapter{2}{2体問題を計算する}
+
+\paragraph{2.1}
+初期位置は$\Rvec_1=(\chtwovalInitialXone,0)\unit{kpc}$、$\Rvec_2=(\chtwovalInitialXtwo,0)\unit{kpc}$です。相対円運動速度は$\chtwovalVc\unit{km\,s^{-1}}$なので、速度はそれぞれ$(0,\chtwovalInitialVone)$、$(0,\chtwovalInitialVtwo)\unit{km\,s^{-1}}$です。内部単位へ換算してから時間積分します。加速度の大きさの比は$1:2$、力の大きさの比は$1:1$です。
+
+\paragraph{2.2}
+$e=0.36$、$a_{\rm orb}=\chtwovalEllA\unit{kpc}$、$D_{\rm p}=\chtwovalEllRp\unit{kpc}$、$T_{\rm ell}=\chtwovalEllP\unit{Gyr}$です。初期動径速度が0で、その後に距離が減るため、初期位置は遠点です。標準計算の最小保存距離は$\chtwovalEllMin\unit{kpc}$でした。時間積分誤差と、近点時刻を有限の時間間隔で保存する誤差を区別します。
+
+\paragraph{2.3}
+理論値が$E(0)=0$なので、初期値に対する相対誤差は定義できません。丸めによって得た小さな非零値で割っても有効な比較にはなりません。$E_{\rm scale}=GM_1M_2/D_0$は、初期の粒子対のポテンシャルエネルギーの大きさです。放物線でも有限な基準になります。
+
+\paragraph{2.4}
+$q=1,0.5,0.1$での各天体の初期重心距離は、同じ順に
+\[
+\begin{aligned}
+|\Rvec_1(0)|&=(\chtwovalRadiusSeriesOne)\unit{kpc},\\
+|\Rvec_2(0)|&=(\chtwovalRadiusSeriesTwo)\unit{kpc}
+\end{aligned}
+\]
+です。全質量を固定すれば$\mu$が同じなので、同じ相対初期条件は同じ相対軌道を与えます。$M_1$だけを固定する場合は、$\mu$も変わります。
+
+\paragraph{2.5}
+重心は式\eqref{eq:ch2-cm-motion}に従います。配布コードでは、重心の直線からのずれは$D_0$で割って約$\chtwovalBoostCm$でした。系全体の運動エネルギー$\Mtot V_{\rm cm}^2/2$を増やせば、相対軌道が束縛されていても$E$を正にできます。束縛性は$\varepsilon$で判断します。
+
+\paragraph{2.6}
+両天体の位置は初期位置へ、速度は初期速度の符号反転へ戻ります。本実装の最大ずれは、位置を$D_0$で割って約$\chtwovalReverseR$、速度を$v_{\rm c}$で割って約$\chtwovalReverseV$でした。これは更新の可逆性の確認であり、順方向の軌道が正確であることだけを検証する試験ではありません。位置の解析的な比較と刻み試験も必要です。
+
+\paragraph{2.7}
+$\varepsilon_0=(1.6^2/2-1)\mu/D_0=0.28\mu/D_0>0$、$e=1.6^2-1=1.56$です。標準の1000ステップで計算した$\Tc$後の距離は$\chtwovalHyperD\unit{kpc}$でした。双曲線は正の相対エネルギーを持ち、放物線と同じ初期距離から、より大きな速度で遠ざかります。完全な実装と数値出力は完成版Notebookで確認できます。
+
+
+\answerchapter{3}{銀河の中で星を動かす}
+
+\paragraph{3.1}
+$\rho(0)=\chthreevalRhoZero\Msun\unit{kpc^{-3}}$、$M(<a)/M=2^{-3/2}\simeq0.353553$、$r_h=\chthreevalRhExact\unit{kpc}$です。$r=2a$の円運動速度は$\chthreevalVc\unit{km\,s^{-1}}$です。内部単位では$\chthreevalVcInt\unit{kpc\,Gyr^{-1}}$です。平面内に選んだのは軌道であり、重力を作るモデルは3次元の球なので、球殻の体積を使います。
+
+\paragraph{3.2}
+分点数は41、幅は$15/40=0.375\unit{kpc}$です。\texttt{integral[j + 1]}は、最初の分点から$j+1$番目の分点までの台形の面積の和です。$g$の単位$\Msun\unit{kpc^{-1}}$に区間幅を掛けると質量になります。$\rho$だけを半径で積分しても、質量の単位にはなりません。
+
+\paragraph{3.3}
+同じ$[0,5a]$で細かくすれば、解析的な$M(<5a)$へ近づきます。一方、幅を固定して範囲を広げる実験では、分点数も増やして中心の分解能を保ちます。解析的な範囲外の質量は、$5a,10a,20a$でそれぞれ約$(\chthreevalOutsideFractions)M$です。有限半径の内側の質量が$M$より少ないことは、積分範囲の定義から生じます。
+
+\paragraph{3.4}
+$15/2^{k+1}\leq10^{-8}$より、必要な半減回数は30です。最初の区間も$k=0$で中点を評価するため、中点評価は31回です。数値積分で定義した関数の根と、連続密度の真の半質量半径との違いは、この半減だけでは取り除けません。
+
+\paragraph{3.5}
+$f=M(<5a)/(2M)$と置くと、解析的には$r=a/\sqrt{f^{-2/3}-1}$です。$f<1/2$なので、球全体の半質量半径より小さくなります。数値計算では右辺にも同じ範囲内の積分値を使うか、解析値を使うかを明示してください。前者は両辺の積分誤差を含む、別の検証になります。
+
+\paragraph{3.6}
+$a=1.5,3,6\unit{kpc}$の順に、円運動速度は約$\chthreevalScaleVcSeries\unit{km\,s^{-1}}$、半質量半径は約$\chthreevalScaleRhSeries\unit{kpc}$です。各モデルで円にする場合は初期速度を調整します。同じ初期速度を固定すると、異なる重力場に同じ初期運動を与えた比較になり、一般には全部を円軌道にはできません。
+
+\paragraph{3.7}
+$v^2=v_r^2+\ell_z^2/r^2$を比エネルギーへ代入し、$v_r=0$とすると式\eqref{eq:ch3-turning-point}です。求めた内側の根は$r_p=\chthreevalPeri\unit{kpc}$でした。標準計算の最小保存半径は$\chthreevalPeriSaved\unit{kpc}$です。この差にはKDKの時間積分誤差と、保存時刻が近点時刻に一致しない効果が含まれます。ここで使うのは初期値からの解析的な保存量で、数値軌道の途中のエネルギーを毎回使って根を合わせ直す方法ではありません。
+
+\bigskip
+完全な実装と数値出力は完成版Notebookにあります。演習条件を変更した場合は、標準結果の数値をそのまま期待値にせず、その条件で確認をやり直してください。
+
+
+\answerchapter{4}{テスト粒子で円盤銀河を作る}
+
+\paragraph{4.1}
+$\int_0^{R_{\max}}p_R\,dR=1$です。$F(R_d)=C(1)/C(5)=\chfourvalFractionRd$なので、期待粒子数は約275個です。実際の乱数標本ではこの値の周りにばらつきます。落としやすい因子は円環の面積の$R$です。
+
+\paragraph{4.2}
+区間$[1,3]$の中点なので$y=2.5$です。逆補間では$x=2$に戻ります。本章の自作関数へ$y=4$を渡すと範囲外として停止します。\texttt{np.interp}の既定値では最終点の$x=3$を返すので、それを方程式の解とみなしてはいけません。
+
+\paragraph{4.3}
+今回の初期円盤は有限範囲で規格化すると定義しています。Plummer球の全質量の定義を変更したわけではありません。標準表の逆補間は$\chfourvalHalfInterp\unit{kpc}$、解析CDFの二分法による比較値は$\chfourvalHalfExact\unit{kpc}$です。標本半径の中央値は今回$\chfourvalHalfSample\unit{kpc}$でした。最初の二つの差は表の積分・補間に由来し、標本の中央値は有限粒子数のばらつきも含みます。これはPlummer球の半質量半径約$\chfourvalPlummerHalf$ kpcとは別の量です。
+
+\paragraph{4.4}
+表\ref{tab:ch4-sampling}の値を再計算できます。ただし、異なる乱数生成環境では初期標本の照合も行います。粒子間重力を計算しないので、$N$は分布の標本数です。積分の次数は更新式と時間刻みによって決まり、$N$を増やしてもKDKは2次のままです。
+
+\paragraph{4.5}
+終点は同じ更新を通るので同じになります。標準の3000ステップでは、保存時刻数は$\chfourvalSavedSeries$個、履歴容量は$\chfourvalMemorySeries$ MBです。初期状態と最終状態も含みます。保存しない時刻の誤差の極値を見逃し得るので、出力を間引いた最大値の評価範囲を明示します。
+
+\paragraph{4.6}
+速度の2乗は変わらないので初期エネルギーは同じです。$\rvec\times\vvec$の符号は反転します。どちらも円軌道なので、連続的な数面密度は定常です。乱数で置いた任意の点の集まりについて、同時刻の粒子配置全体が$x$軸の鏡映になるとは限りません。
+
+\paragraph{4.7}
+接線速度が不足するので、粒子は初期半径から内側へ動き始めます。その後の半径は一般に振動します。今回の0.6 Gyr後の半径の中央値は$\chfourvalSubMedian\unit{kpc}$、保存時刻での最大相対エネルギー誤差は$\chfourvalSubEnergy$でした。これは非円軌道の集合であり、自己重力はありません。円軌道の解析位置は比較対象ではないので、保存量と刻みを変えた数値解どうしを使って精度を確認します。
+
+完全な実装と実行結果は完成版Notebookに含めています。条件を変更した場合は、ここに示した標準値がそのまま期待値になるとは限りません。何を固定し、何を変更したかを記録してください。
+
+
+\answerchapter{5}{2つの銀河を接近させる}
+
+\paragraph{5.1}
+中心は式\eqref{eq:ch5-center-acceleration}、星は出身にかかわらず式\eqref{eq:ch5-tracer-ode}です。$M_1\boldsymbol A_1$と$M_2\boldsymbol A_2$は同じ分母と質量積を持ち、逆符号になります。星は近くへ来た相手からも重力を受けるので、出身番号によって重力源を一つに制限しません。
+
+\paragraph{5.2}
+相対速度は式\eqref{eq:ch5-initial-values}、角運動量は$h=D_0U_t$です。$h$の単位も内部単位へそろえます。$U_p=h/D_p$を式\eqref{eq:ch5-orbital-invariants}へ代入すれば、近点でも$\varepsilon=0$です。$b\to0$では$h^2=2\mu D_p$、$U_r^2=2\mu/D_0-U_t^2$となり、点質量の式へ戻ります。
+
+\paragraph{5.3}
+正しい変換では元の$\boldsymbol s_i,\boldsymbol w_i$へ戻ります。中心速度を足し忘れると、中心に対する速度は$\boldsymbol w_i-\Vvec_k$です。すべての星に意図しない一様な速度差が入り、孤立した円軌道の初期条件ではなくなります。
+
+\paragraph{5.4}
+粒子割合は閾値の片側に何個あるかだけを数えるため、位置が変わっても粒子が閾値を越えなければ同じ値です。細かい側の最大位置差の比は今回\chfivevalLastRatio でした。終時刻、近点、質量・スケール長などを変えたときには、中心の保存量だけでなく、星の位置と調べたい指標の刻み依存性を再確認します。
+
+\paragraph{5.5}
+同じ更新を行うので、全粒子の終点と毎ステップの中心履歴は同じです。全履歴の保存時刻数は$\chfivevalSavedSeries$個になります。履歴の容量は$8\times4\times2002\times N_{\rm save}$ byteなので、それぞれ約$\chfivevalMemorySeries$ MBです。粗い出力では、保存していない時刻に起きた星の変化の極値を見逃す可能性があります。
+
+\paragraph{5.6}
+相対運動は同じで、慣性系全体の等速運動を加えただけです。今回の粒子相対位置の最大差は$R_d$単位で$\chfivevalBoostDiff$でした。一方、速度の2乗には並進速度との交差項が入るので、慣性系で測った個々のエネルギーの数値が同じである必要はありません。
+
+\paragraph{5.7}
+星の初期速度を$\vvec_i'=\Vvec_2-(\vvec_i-\Vvec_2)=2\Vvec_2-\vvec_i$とします。中心の運動は変更しません。今回の$f_1,f_2$は$\chfivevalRetroOne,\chfivevalRetroTwo$でした。出身銀河1の粒子は同じ二つの場を同じ初期条件で受け、銀河2の星から力を受けないので、軌道も変わりません。この違いは、固定形状のポテンシャルと質量ゼロの円盤という近似の中で得た応答です。自己重力、質量損失、ガスなどの効果を含む一般の合体結果まで保証しません。
+
+\medskip
+完全な実装と数値出力は完成版Notebookに含めています。数値条件を変えた場合は、この章に示した値をそのまま期待値にしないでください。
+
+
+\answerchapter{6}{銀河相互作用を調べる}
+
+\paragraph{6.1}
+回転方向では円盤2の内部速度だけを反転します。近点距離では中心初期速度、質量比では中心の重心配分・相対速度と円盤2の円運動速度も変わります。本章の質量比系列は$M_1$固定なので$M_1+M_2$が変わり、第2章の全質量固定の比較とは違います。
+
+\paragraph{6.2}
+$\vvec_i=\Vvec_2+\boldsymbol w_i$から、$\boldsymbol w_i$だけを反転すると式\eqref{eq:ch6-reverse-spin}です。本実装では中心と円盤1の履歴が一致します。これは星からの反作用と星同士の重力を省いているためで、自己重力系への一般化はできません。
+
+\paragraph{6.3}
+$q=0.1$では$t_{\rm p}=\chsixvalQsmallTime\unit{Gyr}$なので、$t=0.47\unit{Gyr}$は$\tau=\chsixvalSmallTauFixed\unit{Gyr}$です。基準PPの同じ時刻は$\tau=\chsixvalBaseTau\unit{Gyr}$で、約$\chsixvalEpochDifferenceMyr$ Myr違います。本章では目標経過時間に最も近い保存時刻を選び、選択のずれも記録します。
+
+\paragraph{6.4}
+20、30、40 kpcの閾値ではPP--PRの差は$\chsixvalThresholdDifferences$でした。seed 42、43、44では、30 kpcの差は$\chsixvalSeedDifferences$です。前者は測定方法、後者は有限標本を変えています。三組で傾向が残ることは確認できますが、観測銀河全体に対する統計的な保証ではありません。
+
+\paragraph{6.5}
+標準出力では、近点5 kpcの最大差は$R_{\rm d}$単位で約$\chsixvalPfiveMax$、二乗平均平方根は約$\chsixvalPfiveRms$です。$\Delta f_k$は両方0でした。粒子が閾値の同じ側にいれば割合は変わりません。追加計算でも初期配列を再利用し、保存時刻を共通にして粒子番号ごとに比較します。
+
+\paragraph{6.6}
+一意の数値解答はありません。問い、比較条件、結果、確認、解釈の対応を重視します。非単調な結果が得られた場合も、値を選別せず、測定時刻と閾値の意味に戻って説明してください。数値計算の再現性と、物理モデルの適用範囲を両方示すことが到達目標です。
+
+\paragraph{6.7}
+比は5、8、12 kpcの順に$\chsixvalSoftRatios$です。$D\gg b$なら1へ近づきます。中心に対する全加速度と、星と中心の加速度差は別の量です。また、軌道の速さや粒子の位相・測定時刻も変わるため、この比だけで$f_k$の大小は決まりません。$b$はモデル、$\Delta t$は同じモデルを解く数値精度の設定です。完成版Notebookに、軌道を変更せずこの比を計算する短い実装を収録しています。
+
+\answerchapter{7}{動力学的摩擦で軌道減衰を調べる}
+
+\paragraph{7.1}
+$\gamma=4\pi G^2M_{\rm sat}\rho\ln\Lambda\,B(X)/V_{\rm s}^3$で、単位は$\mathrm{Gyr^{-1}}$です。$B(0)=0$で、$X\geq0$では$B(X)\geq0$なので、$\ln\Lambda\geq0$なら$\Vvec_{\rm s}\cdot\avec_{\rm df}\leq0$です。低速では式\eqref{eq:ch7-small-x}を使って$\gamma$は有限にとどまり、$\Vvec_{\rm s}=0$なら加速度も0になります。
+
+\paragraph{7.2}
+摩擦なしの最終半径は約$\chsevenvalRno\unit{kpc}$で、比エネルギーと比角運動量の最大相対誤差はそれぞれ$\chsevenvalEno$、$\chsevenvalLno$です。摩擦ありの最終半径は$\chsevenvalRdf\unit{kpc}$です。摩擦ありの保存量の変化を、摩擦なしの場合と同じ数値誤差として扱いません。
+
+\paragraph{7.3}
+標準の1 Myrでは仕事積分の残差は$\chsevenvalWorkResidual$です。後処理に合成台形則を使うため、その残差には2次の積分誤差が入ります。一方、RK4で求めた位置の隣接解差は、細かい側で比が$\chsevenvalDfRatio$となり、4次法に対応する16へ近づきます。異なる処理の誤差次数を混同しません。
+
+\paragraph{7.4}
+$\ln\Lambda=1,2,\ln11$に対する1.50 Gyr後の半径は$\chsevenvalLambdaSeries\unit{kpc}$です。Coulomb対数は摩擦モデルの係数で、時間刻みを変える数値収束とは別です。大きい係数ほど本例では減衰が強くなりますが、どの値が現実的かは背景・衛星構造と摩擦モデルの仮定に依存します。
+
+\paragraph{7.5}
+0.25 Myrと0.125 Myrの全保存時刻・全星の最大位置差は$R_{\rm d,sat}$単位で$\chsevenvalSatMax$、二乗平均平方根は$\chsevenvalSatRms$でした。星が広がっても$M_{\rm sat}$を減らさないため、質量損失によって摩擦が弱まる効果はありません。主銀河の変形やwakeも直接計算していないので、自己無撞着な合体時刻や合体残骸の構造は本章から決められません。

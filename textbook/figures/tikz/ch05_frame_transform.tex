@@ -1,0 +1,23 @@
+% Separate diagrams for position addition and velocity addition; lengths have different units.
+\begin{tikzpicture}[textbook diagram]
+  \node[anchor=west,font=\sffamily\bfseries] at (0,4.80) {Add the center position and the center velocity};
+  \node at (2.75,4.18) {Position space};
+  \node at (9.00,4.18) {Velocity space};
+  \coordinate (O) at (0.45,0.68); \coordinate (C) at (2.93,1.50); \coordinate (P) at (4.55,3.32);
+  \coordinate (Z) at (6.60,0.68); \coordinate (V) at (9.32,1.40); \coordinate (W) at (10.85,3.30);
+  \draw[vector,figblue] (O) -- node[below,pos=.52] {$\boldsymbol R_k$} (C);
+  \draw[vector,figred,dashed] (C) -- node[right,pos=.60] {$\boldsymbol s_i$} (P);
+  \draw[vector] (O) -- node[above left,pos=.56] {$\boldsymbol r_i$} (P);
+  \draw[vector,figblue] (Z) -- node[below,pos=.52] {$\boldsymbol V_k$} (V);
+  \draw[vector,figred,dashed] (V) -- node[right,pos=.57] {$\boldsymbol w_i$} (W);
+  \draw[vector] (Z) -- node[above left,pos=.53] {$\boldsymbol v_i$} (W);
+  \fill (O) circle(1.3pt);\node[below left] at (O) {$O$};
+  \fill (Z) circle(1.3pt);\node[below left] at (Z) {$0$};
+  \draw[black] ($(C)+(-.07,-.07)$) -- ($(C)+(.07,.07)$);\draw[black] ($(C)+(-.07,.07)$) -- ($(C)+(.07,-.07)$);
+  \fill (P) circle(1.8pt);\node[above right] at (P) {Star $i$};
+  \node[small label,below,yshift=-1.0mm] at (C) {Center $k$};
+  \draw[black!20] (5.78,0.3) -- (5.78,3.9);
+  \node at (2.75,-0.13) {$\boldsymbol r_i=\boldsymbol R_k+\boldsymbol s_i$};
+  \node at (9.00,-0.13) {$\boldsymbol v_i=\boldsymbol V_k+\boldsymbol w_i$};
+  \node[small label,text=figgray] at (5.80,-0.88) {Blue: center motion; dashed red: motion relative to the center.};
+\end{tikzpicture}

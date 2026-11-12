@@ -1,0 +1,122 @@
+{
+  "passed": 29,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "unequal-mass action reaction",
+      "passed": true
+    },
+    {
+      "name": "center relative acceleration",
+      "passed": true
+    },
+    {
+      "name": "translated Plummer field",
+      "passed": true
+    },
+    {
+      "name": "Plummer acceleration at its center",
+      "passed": true
+    },
+    {
+      "name": "zero energy q=1.0",
+      "passed": true
+    },
+    {
+      "name": "zero barycenter q=1.0",
+      "passed": true
+    },
+    {
+      "name": "incoming radial speed q=1.0",
+      "passed": true
+    },
+    {
+      "name": "zero energy q=0.5",
+      "passed": true
+    },
+    {
+      "name": "zero barycenter q=0.5",
+      "passed": true
+    },
+    {
+      "name": "incoming radial speed q=0.5",
+      "passed": true
+    },
+    {
+      "name": "zero energy q=0.1",
+      "passed": true
+    },
+    {
+      "name": "zero barycenter q=0.1",
+      "passed": true
+    },
+    {
+      "name": "incoming radial speed q=0.1",
+      "passed": true
+    },
+    {
+      "name": "known sampled pericenter",
+      "passed": true
+    },
+    {
+      "name": "nearest stored post-pericenter epoch",
+      "passed": true
+    },
+    {
+      "name": "aligned epoch outside range",
+      "passed": true
+    },
+    {
+      "name": "pericenter at edge rejected",
+      "passed": true
+    },
+    {
+      "name": "origin distances, not nearest center",
+      "passed": true
+    },
+    {
+      "name": "strict threshold and separate denominators",
+      "passed": true
+    },
+    {
+      "name": "paired seeds keep all initial positions",
+      "passed": true
+    },
+    {
+      "name": "only internal velocity is reversed",
+      "passed": true
+    },
+    {
+      "name": "unchanged center initial state",
+      "passed": true
+    },
+    {
+      "name": "KDK caches acceleration: n+1 calls",
+      "passed": true
+    },
+    {
+      "name": "last time saved even off stride",
+      "passed": true
+    },
+    {
+      "name": "tracers do not change center orbit",
+      "passed": true
+    },
+    {
+      "name": "softening ratio bounded D=5",
+      "passed": true
+    },
+    {
+      "name": "softening ratio bounded D=8",
+      "passed": true
+    },
+    {
+      "name": "softening ratio bounded D=12",
+      "passed": true
+    },
+    {
+      "name": "softening ratio approaches one far away",
+      "passed": true
+    }
+  ]
+}

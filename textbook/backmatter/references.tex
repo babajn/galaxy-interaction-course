@@ -1,0 +1,53 @@
+\begin{thebibliography}{99}
+\markboth{参考図書}{}
+\addcontentsline{toc}{chapter}{参考図書}
+
+\item[]\textbf{銀河力学・天体力学}
+\bibitem{ryden2025}
+Barbara Ryden, \textit{Celestial and Stellar Dynamics}, Cambridge University Press, 2025.\\
+2体問題、中心力、球対称ポテンシャル、潮汐などを学ぶための入門的な参考書です。本書では、学部生が物理的な意味を確認するときの主参考書として用います。
+
+\bibitem{bt2008}
+J. Binney and S. Tremaine, \textit{Galactic Dynamics}, 2nd ed., Princeton University Press, 2008.\\
+銀河ポテンシャル、Plummerモデル、軌道論、恒星系の力学、動力学的摩擦などをより詳しく調べるための標準的な参考書です。
+
+\item[]\textbf{数値計算法}
+\bibitem{sugiura2009}
+杉浦洋『数値計算の基礎と応用［新訂版］―数値解析学への入門―』サイエンス社、2009年。\\
+浮動小数点数と丸め誤差、補間、台形則、二分法・Newton法・割線法、Euler法・Runge--Kutta法など、本書で使う数値計算法の多くを扱っています。
+
+\bibitem{irifuji1985}
+伊理正夫・藤野和建『数値計算の常識』共立出版、1985年。\\
+数値計算で生じる誤差や注意点に加え、逆補間、乱数、特定の確率分布に従う乱数の生成を扱っています。第4章の逆変換サンプリングと直接関係します。
+
+\bibitem{simten2007}
+冨阪幸治・花輪知幸・牧野淳一郎 編『シリーズ現代の天文学14 シミュレーション天文学』日本評論社、2007年。\\
+天文学の数値計算を扱い、leapfrog法の時間反転対称性・シンプレクティック性と、粒子系で広く使われる理由を説明しています。本書の重力計算におけるleapfrogの位置づけと対応します。
+
+\bibitem{kouya2021}
+幸谷智紀『Python数値計算プログラミング』講談社、2021年。\\
+Python 3とNumPy・SciPyを用いて数値計算を実装しながら学ぶ参考書です。浮動小数点数、補間、数値積分、Euler法・古典的Runge--Kutta法などを扱っており、本書の計算法をPythonでさらに確認したい場合の補助参考書とします。
+
+\item[]\textbf{補足文献・公式ドキュメント}
+\bibitem{pyvenv}
+Python Software Foundation, \href{https://docs.python.org/3/library/venv.html}{\texttt{venv}: Creation of virtual environments}.\\
+第0章のPython環境構築を補う公式文書です。
+
+\bibitem{jupyter}
+Project Jupyter, \href{https://jupyter.org/install}{Installing Jupyter}; JupyterLab Documentation.\\
+第0章のNotebookとカーネル操作を補う公式文書です。
+
+\bibitem{numpy}
+NumPy Documentation, \href{https://numpy.org/doc/stable/user/absolute_beginners.html}{NumPy: the absolute basics for beginners}; \href{https://numpy.org/doc/stable/reference/generated/numpy.interp.html}{\texttt{numpy.interp}}.\\
+第4章で使う線形補間の実装仕様を確認するために参照します。
+
+
+
+\bibitem{scipy_pchip}
+SciPy Documentation, \href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.PchipInterpolator.html}{\texttt{PchipInterpolator}}.\\
+第4章の「もう少し詳しく」で、単調性を保つ区分的三次補間の例を紹介するときにのみ参照します。SciPyは本書の標準計算には必要ありません。
+
+\end{thebibliography}
+
+\noindent\small
+公式ドキュメントのURLは2026年9月28日に確認しました。本書では、数値計算法について和書で扱える範囲を優先して参考図書に挙げています。より高度な常微分方程式や幾何学的積分法へ進む場合は、必要に応じて専門書を追加してください。

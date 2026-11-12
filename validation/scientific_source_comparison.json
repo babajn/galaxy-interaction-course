@@ -1,0 +1,34 @@
+[
+  {
+    "chapter": 1,
+    "unchanged_function_count": 13,
+    "different_functions": []
+  },
+  {
+    "chapter": 2,
+    "unchanged_function_count": 11,
+    "different_functions": []
+  },
+  {
+    "chapter": 3,
+    "unchanged_function_count": 24,
+    "different_functions": []
+  },
+  {
+    "chapter": 4,
+    "unchanged_function_count": 22,
+    "different_functions": [
+      "disk_cdf_exact"
+    ]
+  },
+  {
+    "chapter": 5,
+    "unchanged_function_count": 24,
+    "different_functions": []
+  },
+  {
+    "chapter": 6,
+    "unchanged_function_count": 36,
+    "different_functions": []
+  }
+]

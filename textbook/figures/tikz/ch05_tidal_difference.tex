@@ -1,0 +1,47 @@
+% Illustration along the line joining two well-separated galaxies.
+% Only the companion's gravitational contribution is drawn.
+% Arrow lengths use the point-mass far-field form. This is not the close-passage run.
+\begin{tikzpicture}[textbook diagram]
+  \node[anchor=west,font=\sffamily\bfseries] at (0,4.05) {(a) Gravity from the companion};
+  \node[small label,anchor=west,text=figgray] at (0,3.52) {Companion contribution only; not a simulation snapshot};
+  \draw[guide] (0.65,1.72) -- (11.40,1.72);
+  \foreach \x/\len/\lab in {2/0.71429/far,3.2/1.04043/c,4.4/1.65406/near} {
+    \draw[vector,figblue] (\x,1.72) -- ++(\len,0);
+    \draw[guide] (\x,1.77) -- (\x,2.45);
+  }
+  \fill[figblue] (2,1.72) circle (1.8pt);
+  \fill[figblue] (4.4,1.72) circle (1.8pt);
+  \draw[black,line width=1pt] (3.12,1.64) -- (3.28,1.80);
+  \draw[black,line width=1pt] (3.12,1.80) -- (3.28,1.64);
+  \node[above] at (2.0,2.45) {Far side};
+  \node[above] at (3.5,2.92) {Center 1};
+  \draw[guide] (3.2,2.45) -- (3.5,2.80);
+  \node[above] at (5.05,2.45) {Near side};
+  \draw[guide] (4.4,2.45) -- (5.05,2.45);
+  \node[below] at (2.0,1.72) {$\boldsymbol a_{\rm far}$};
+  \node[below,yshift=-5mm] at (3.55,1.72) {$\boldsymbol a_{\rm c}$};
+  \node[below] at (5.80,1.72) {$\boldsymbol a_{\rm near}$};
+  \draw[figred,dashed] (9.0,1.72) circle (0.60);
+  \draw[figred,dashed] (9.0,1.72) circle (0.90);
+  \draw[black,line width=1pt] (8.92,1.72) -- (9.08,1.72);
+  \draw[black,line width=1pt] (9,1.64) -- (9,1.80);
+  \node[align=center] at (9,3.0) {Companion\\(center 2)};
+  \node[align=center] at (8.9,0.18) {All three accelerations\\point to the companion.};
+  \draw[black!25] (0,-0.50) -- (11.55,-0.50);
+  \node[anchor=west,font=\sffamily\bfseries] at (0,-1.10) {(b) Subtract the acceleration of center 1};
+  \draw[guide] (0.65,-2.55) -- (11.40,-2.55);
+  \fill[figblue] (2,-2.55) circle (1.8pt);
+  \fill[figblue] (4.4,-2.55) circle (1.8pt);
+  \draw[black,line width=1pt] (3.12,-2.63) -- (3.28,-2.47);
+  \draw[black,line width=1pt] (3.12,-2.47) -- (3.28,-2.63);
+  \draw[vector,figred] (2,-2.55) -- (1.67386,-2.55);
+  \draw[vector,figred] (4.4,-2.55) -- (5.01363,-2.55);
+  \node[above] at (1.65,-2.15) {$\boldsymbol a_{\rm far}-\boldsymbol a_{\rm c}$};
+  \node[below] at (4.98,-2.73) {$\boldsymbol a_{\rm near}-\boldsymbol a_{\rm c}$};
+  \node[below] at (3.2,-2.55) {$0$};
+  \draw[figred,dashed] (9,-2.55) circle (0.60);
+  \draw[figred,dashed] (9,-2.55) circle (0.90);
+  \draw[black,line width=1pt] (8.92,-2.55) -- (9.08,-2.55);
+  \draw[black,line width=1pt] (9,-2.63) -- (9,-2.47);
+  \node[draw=black!30,fill=white,text width=106mm,align=center,inner sep=5pt] at (5.75,-4.17) {$\delta\boldsymbol a_2(\boldsymbol s)=\boldsymbol a_2(\boldsymbol R_1+\boldsymbol s)-\boldsymbol a_2(\boldsymbol R_1)$};
+\end{tikzpicture}

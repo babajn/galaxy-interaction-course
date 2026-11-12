@@ -1,0 +1,13 @@
+KM_S_TO_KPC_GYR = 1.0227121650537077
+G = 4.30091e-6 * KM_S_TO_KPC_GYR**2
+masses = np.array([1.0e11, 1.0e11])  # Plummer球の全質量 [Msun]
+scales = np.array([3.0, 3.0])        # a1, a2 [kpc]
+b = 3.0                             # 中心間力の有効長さ [kpc]
+rds = np.array([3.0, 3.0])
+rmaxs = np.array([15.0, 15.0])
+counts = np.array([1000, 1000])
+spins = np.array([+1, +1])           # 今回は軌道も反時計回りなので両方prograde
+seed, n_cdf = 42, 4096
+d_start, d_peri = 60.0, 8.0         # 初期距離・目標近点距離 [kpc]
+t_end, n_steps, save_every = 0.60, 12000, 40
+dt = t_end / n_steps                 # 0.05 Myr。出力は2 Myrごとです。

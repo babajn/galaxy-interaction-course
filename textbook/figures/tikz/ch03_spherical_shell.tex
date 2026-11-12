@@ -1,0 +1,24 @@
+% A cross-section of a three-dimensional shell, not a material outer boundary.
+\begin{tikzpicture}[textbook diagram]
+  \node[anchor=west,font=\sffamily\bfseries] at (0,4.85) {A thin shell in a spherical mass distribution};
+  \coordinate (O) at (2.55,2.35);
+  \path[fill=black!5] (O) circle (1.48);
+  \path[fill=figblue!18,even odd rule] (O) circle (1.72) (O) circle (1.48);
+  \draw[figblue] (O) circle (1.48);
+  \draw[figblue] (O) circle (1.72);
+  \draw[guide] ($(O)+(-10:2.03)$) arc[start angle=-10,end angle=115,radius=2.03];
+  \draw[guide] ($(O)+(155:2.03)$) arc[start angle=155,end angle=280,radius=2.03];
+  \draw[figgray,densely dashed] (O) ellipse (1.48 and 0.40);
+  \fill (O) circle (1.5pt);
+  \draw[vector] (O) -- ($(O)+(35:1.48)$) node[midway,above left] {$r$};
+  \draw[guide] ($(O)+(135:1.48)$) -- (0.65,3.95);
+  \draw[guide] ($(O)+(135:1.72)$) -- (0.37,4.22);
+  \node[anchor=east] at (0.38,4.05) {$dr$};
+  \node at (2.4,1.78) {$M(<r)$};
+  \node[small label,text=figgray] at (2.55,0.22) {3D shell; thickness exaggerated};
+  \node[hint,anchor=west,text width=57mm] at (5.6,3.70) {Shell volume\\[2mm]$dV=4\pi r^2\,dr$};
+  \node[hint,anchor=west,text width=57mm] at (5.6,2.15) {Mass in this shell\\[2mm]$dM=\rho(r)\,dV$};
+  \node[hint,anchor=west,text width=57mm] at (5.6,0.68) {Density continues outside the shell.\\This is not the edge of a Plummer sphere.};
+  \draw[guide] (4.43,1.60) -- (5.4,0.91);
+  \node[draw=black!30,fill=white,text width=108mm,align=center,inner sep=6pt] at (5.85,-0.93) {$\displaystyle M(<r)=4\pi\int_0^r s^2\rho(s)\,ds$};
+\end{tikzpicture}

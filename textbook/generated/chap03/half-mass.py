@@ -1,0 +1,6 @@
+r_half, root_trace = bisection(half_mass_residual, 0.0, 5.0 * a, root_xtol)
+r_half_exact = a / np.sqrt(2.0**(2.0 / 3.0) - 1.0)
+print(f"Numerical half-mass radius = {r_half:.9f} kpc")
+print(f"Analytic half-mass radius  = {r_half_exact:.9f} kpc")
+print(f"Residual of numerical F = {half_mass_residual(r_half):.6e}")
+print(f"Residual using exact M = {mass_plummer_exact(r_half, mass, a) / mass - 0.5:.6e}")

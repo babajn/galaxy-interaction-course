@@ -1,0 +1,9 @@
+{
+  "pages": 177,
+  "main_document": "main.tex",
+  "compiler": "XeLaTeX",
+  "clean_local_build": true,
+  "text_equal_to_integrated_pdf": true,
+  "server_tested": false,
+  "notes": "Dedicated manuscript tree compiled locally with XeLaTeX in three passes; actual Overleaf server was not tested."
+}

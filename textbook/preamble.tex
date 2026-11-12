@@ -1,0 +1,162 @@
+% ------------------------------------------------------------
+% Preamble for 「Pythonによる はじめての銀河シミュレーション」
+% 157 x 221 mm layout based on the supplied textbook template.
+% Compile with XeLaTeX.
+% ------------------------------------------------------------
+\usepackage[paperwidth=157mm,paperheight=221mm,margin=14mm,headheight=14pt,headsep=6mm]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{graphicx,rotating,float,placeins,caption}
+\captionsetup{font=small,labelfont=bf,labelsep=quad}
+\graphicspath{{figures/}{./}}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\IfFontExistsTF{Latin Modern Roman}{\setmainfont{Latin Modern Roman}}{\setmainfont{Liberation Serif}}
+\IfFontExistsTF{Latin Modern Sans}{\setsansfont{Latin Modern Sans}}{\setsansfont{Liberation Sans}}
+\IfFontExistsTF{DejaVu Sans Mono}{\setmonofont{DejaVu Sans Mono}[Scale=0.91]}{}
+\setCJKmainfont{Noto Serif CJK JP}[ItalicFont={Noto Serif CJK JP}]
+\setCJKsansfont{Noto Sans CJK JP}
+\setCJKmonofont{Noto Sans Mono CJK JP}[Scale=0.90]
+\xeCJKsetup{CJKmath=true}
+\XeTeXlinebreaklocale "ja"
+\XeTeXlinebreakskip = 0pt plus 0.1pt minus 0.01pt
+
+\usepackage{xcolor,enumitem,array,booktabs,tabularx,xurl,etoolbox,needspace,fvextra}
+\usepackage{fix-cm}
+
+% TikZ settings are defined here rather than in a separate input file.
+% This makes the project robust on Overleaf even when only the main preamble
+% and chapter/figure files are copied into an existing project.
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,patterns,decorations.pathreplacing,matrix}
+\definecolor{figblue}{HTML}{0072B2}
+\definecolor{figred}{HTML}{D55E00}
+\definecolor{figgreen}{HTML}{009E73}
+\definecolor{figgray}{HTML}{666666}
+\tikzset{
+  textbook diagram/.style={font=\sffamily\fontsize{9}{11}\selectfont,>=Latex,line width=0.6pt},
+  vector/.style={-{Latex[length=2.1mm,width=1.4mm]},line width=0.85pt},
+  guide/.style={draw=figgray,densely dashed,line width=0.5pt},
+  state/.style={draw=black!50,fill=white,rounded corners=1pt,minimum width=48mm,minimum height=9mm,align=center},
+  hint/.style={align=left,font=\sffamily\fontsize{8.5}{10.5}\selectfont},
+  small label/.style={font=\sffamily\fontsize{8}{10}\selectfont}
+}
+
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{titlesec,fancyhdr}
+
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0.15em}
+\linespread{1.08}
+\raggedbottom
+\emergencystretch=1.5em
+\widowpenalty=10000
+\clubpenalty=10000
+
+\definecolor{navy}{HTML}{0D1B3E}
+\definecolor{amber}{HTML}{B5740F}
+\definecolor{amberbg}{HTML}{FBF1E0}
+\definecolor{cyan}{HTML}{1F6390}
+\definecolor{cyanbg}{HTML}{E7F0F7}
+\definecolor{navybg}{HTML}{EDF0F7}
+\definecolor{rule}{HTML}{C9D2E3}
+\definecolor{notegray}{HTML}{F3F5F6}
+\definecolor{notegreen}{HTML}{287250}
+\definecolor{warnred}{HTML}{9B4030}
+
+% Article boxes: notebox/failbox. goalbox is a chapter-opening structural element.
+\newtcolorbox{notebox}[1]{enhanced,breakable,colback=notegray,colframe=notegreen,
+  boxrule=0.45pt,arc=1.5pt,left=2.8mm,right=2.8mm,top=2mm,bottom=2mm,
+  fonttitle=\sffamily\bfseries,colbacktitle=notegreen!10,coltitle=notegreen,
+  title={もう少し詳しく：#1},before skip=7pt,after skip=7pt}
+\newtcolorbox{failbox}[1]{enhanced,breakable,colback=notegray,colframe=warnred,
+  boxrule=0.45pt,arc=1.5pt,left=2.8mm,right=2.8mm,top=2mm,bottom=2mm,
+  fonttitle=\sffamily\bfseries,colbacktitle=warnred!8,coltitle=warnred,
+  title={よくある失敗：#1},before skip=7pt,after skip=7pt}
+\newtcolorbox{goalbox}[1][本章の目標]{colback=cyanbg,colframe=cyan,coltitle=white,
+  title={\sffamily #1},fonttitle=\bfseries,boxrule=0.7pt,arc=2pt,
+  left=7pt,right=7pt,top=5pt,bottom=5pt,breakable}
+
+\newcommand{\inputcode}[1]{\par\smallskip\noindent\begin{minipage}{\linewidth}\VerbatimInput[
+  fontsize=\fontsize{7.5}{9.3}\selectfont,frame=lines,rulecolor=\color{navy!35},framesep=2.2mm,
+  numbers=left,numbersep=4pt,breaklines=true,breakanywhere=true,tabsize=4]{generated/#1.py}\end{minipage}\par\smallskip}
+
+\titleformat{\chapter}{\LARGE\bfseries\sffamily\color{navy}}{第\thechapter 章}{0.8em}{}
+\titleformat{\section}{\large\bfseries\sffamily\color{navy}}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries\sffamily\color{navy}}{\thesubsection}{0.5em}{}
+\titlespacing*{\chapter}{0pt}{0pt}{12pt}
+\titlespacing*{\section}{0pt}{1.1em}{0.4em}
+\titlespacing*{\subsection}{0pt}{0.75em}{0.25em}
+\pretocmd{\section}{\Needspace{6\baselineskip}}{}{}
+\pretocmd{\subsection}{\Needspace{5\baselineskip}}{}{}
+\setlist[itemize]{leftmargin=1.7em,itemsep=0.15em,topsep=0.25em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.2em,topsep=0.3em}
+\setcounter{tocdepth}{1}
+\setcounter{secnumdepth}{2}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\scriptsize\sffamily はじめての銀河シミュレーション}
+\fancyhead[R]{\scriptsize\sffamily\nouppercase{\leftmark}}
+\makeatletter
+\renewcommand{\chaptermark}[1]{%
+  \if@mainmatter
+    \markboth{第\thechapter 章\enspace #1}{}%
+  \else
+    \markboth{#1}{}%
+  \fi}
+\makeatother
+\fancyfoot[R]{\small\thepage}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[R]{\small\thepage}\renewcommand{\headrulewidth}{0pt}}
+
+\newcommand{\rvec}{\boldsymbol r}
+\newcommand{\vvec}{\boldsymbol v}
+\newcommand{\avec}{\boldsymbol a}
+\newcommand{\yvec}{\boldsymbol y}
+\newcommand{\fvec}{\boldsymbol f}
+\newcommand{\kvec}{\boldsymbol k}
+\newcommand{\Rvec}{\boldsymbol R}
+\newcommand{\Vvec}{\boldsymbol V}
+\newcommand{\Dvec}{\boldsymbol D}
+\newcommand{\Uvec}{\boldsymbol U}
+\newcommand{\Pvec}{\boldsymbol P}
+\newcommand{\Mtot}{M_{\rm tot}}
+\newcommand{\mred}{m_{\rm red}}
+\newcommand{\Tc}{T_{\rm c}}
+\newcommand{\Msun}{M_\odot}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\newcommand{\figpath}[1]{figures/#1.pdf}
+\renewcommand{\contentsname}{目次}
+\renewcommand{\figurename}{図}
+\renewcommand{\tablename}{表}
+\renewcommand{\bibname}{参考図書}
+% Chapter zero must keep the prefix in figures, tables, and equations.
+\renewcommand{\thefigure}{\thechapter.\arabic{figure}}
+\renewcommand{\thetable}{\thechapter.\arabic{table}}
+\renewcommand{\theequation}{\thechapter.\arabic{equation}}
+% Same end-of-chapter headings and bibliography in every chapter.
+\newcommand{\chapterexercises}{\section*{演習}\phantomsection\addcontentsline{toc}{section}{演習}}
+\newcommand{\answerchapter}[2]{\section*{第#1章　#2}\phantomsection\addcontentsline{toc}{section}{第#1章　#2}}
+% Shell commands are not executable Python; keep them visibly distinct.
+\newcommand{\inputterminal}[1]{\par\smallskip\noindent
+  {\footnotesize\sffamily 端末で実行}\par\nobreak
+  \VerbatimInput[fontsize=\fontsize{8}{10}\selectfont,frame=single,rulecolor=\color{black!30},
+  framesep=2mm,breaklines=true,breakanywhere=true,numbers=none]{#1}\smallskip}
+\newcommand{\booktitle}{Pythonによる はじめての銀河シミュレーション}
+\newcommand{\booksubtitle}{テスト粒子で学ぶ重力・軌道・銀河相互作用}
+\newcommand{\bookversion}{見出し統一版 v2.5}
+\newcommand{\distributionnote}{授業・ゼミで案内する配布先から入手してください。公開URLは刊行時に確定します。}
+
+
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.85}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{5}
+\setlength{\textfloatsep}{9pt plus 3pt minus 2pt}
+\setlength{\intextsep}{9pt plus 3pt minus 2pt}
+
+\usepackage[unicode,colorlinks=true,linkcolor=cyan,citecolor=cyan,urlcolor=cyan]{hyperref}

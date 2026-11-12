@@ -1,0 +1,12 @@
+% Dependency arrows, not spatial force vectors.
+\begin{tikzpicture}[textbook diagram]
+  \node[anchor=west,font=\sffamily\bfseries] at (0,4.45) {Which objects affect which others?};
+  \node[draw=figblue,fill=figblue!5,rounded corners=1pt,text width=33mm,minimum height=16mm,align=center] (c1) at (2.0,2.80) {Center 1\\$M_1,\ \boldsymbol R_1$};
+  \node[draw=figred,fill=figred!5,rounded corners=1pt,text width=33mm,minimum height=16mm,align=center] (c2) at (9.7,2.80) {Center 2\\$M_2,\ \boldsymbol R_2$};
+  \draw[{Latex}-{Latex},line width=0.85pt] (c1.east) -- node[above,align=center] {Effective pair\\potential: $b$} (c2.west);
+  \node[draw=black!55,fill=white,rounded corners=1pt,text width=103mm,minimum height=17mm,align=center] (stars) at (5.85,-0.90) {Massless tracers: $\boldsymbol r_i$\\Every tracer feels both Plummer fields.};
+  \draw[vector,figblue] (c1.south) -- node[right,align=left,pos=.52] {Plummer field 1\\$M_1,\ a_1$} (2.0,-.04);
+  \draw[vector,figred,dashed] (c2.south) -- node[left,align=right,pos=.52] {Plummer field 2\\$M_2,\ a_2$} (9.7,-.04);
+  \node[draw=black!30,rounded corners=1pt,text width=103mm,align=center,inner sep=5pt] at (5.85,-2.64) {No tracer--tracer forces.\\No feedback from tracers to the centers.};
+  \node[small label,text=figgray,anchor=west] at (0,-3.65) {Arrows show model dependencies, not force directions in space.};
+\end{tikzpicture}

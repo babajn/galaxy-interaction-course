@@ -1,0 +1,259 @@
+\chapter{動力学的摩擦で軌道減衰を調べる}
+\label{chap:dynamical-friction}
+第6章までは、二つの銀河中心を保存的な重力だけで動かしました。そのため、星の軌道が大きく変化しても、中心軌道のエネルギーを失わせる仕組みはなく、近接通過した二つの中心は再び離れていきます。本章では、ここへ新しい物理としてChandrasekhar動力学的摩擦を加え、衛星銀河の軌道がどのように減衰するかを調べます。
+
+ここでは第5--6章の等質量遭遇へ摩擦をそのまま追加しません。原点に固定したPlummer主銀河と、質量比1:10の衛星銀河へモデルを切り替えます。衛星中心には主銀河の重力と速度依存の摩擦加速度を与え、時間積分には第1章で学んだRK4を使います。最後に衛星の周りへ質量ゼロのテスト粒子を置きますが、摩擦を星へ直接加えることはしません。
+
+\begin{goalbox}[この章で学ぶこと]
+\begin{itemize}
+\item Chandrasekhar動力学的摩擦の各項の意味と、この近似で省いている背景応答を説明できます。
+\item 速度依存力を含む衛星中心の運動方程式をRK4で積分し、摩擦あり・なしを比較できます。
+\item エネルギーと角運動量の物理的な減少を、保存系の数値誤差と区別できます。
+\item 時間刻み、Coulomb対数、テスト粒子の追加を別々の変更として評価できます。
+\end{itemize}
+\end{goalbox}
+
+\section{近接通過と軌道減衰の違いを考える}
+\label{sec:ch7-model}
+\subsection{近接通過と軌道減衰を区別する}
+ここまでのモデルでは、星が遠くへ移動しても中心へ反作用を返しません。中心軌道のエネルギーも保存されるため、近接通過後に自動的に合体へ移る仕組みはありません。そこで本章では、主銀河の中を動く衛星銀河に、動力学的摩擦による減速を加えます。
+
+動力学的摩擦は、単なる接触摩擦ではなく、背景の多数の粒子との重力相互作用に由来する効果です。Chandrasekharの動力学的摩擦は、銀河力学で用いられる標準的な近似の一つです。\cite{bt2008} 本書では背景粒子の応答を直接計算せず、その効果を近似的な加速度として与えます。したがって、重力wakeの形や、背景が受け取るエネルギーを直接解いているわけではありません。
+
+\subsection{等質量の二銀河モデルから切り替える}
+本章では、原点に固定したPlummer主銀河と、質量比1:10の衛星銀河を使います。これは本書の基本モデルとは別に用意した、軌道減衰を調べるための簡略モデルです。表\ref{tab:ch7-df-model}のように、第5--6章の二銀河遭遇とは初期軌道も重力源の扱いも違います。
+\begin{table}[htbp]\centering\small
+\caption{本章の動力学的摩擦モデル。第5--6章の等質量・ゼロエネルギー遭遇とは別の設定です。}\label{tab:ch7-df-model}
+\begin{tabularx}{\linewidth}{lX}\toprule
+項目 & 設定 \\\midrule
+主銀河 & $M_{\rm host}=10^{11}\Msun$、$a_{\rm host}=3\unit{kpc}$、原点に固定 \\
+衛星銀河 & $M_{\rm sat}=10^{10}\Msun$、$a_{\rm sat}=1.5\unit{kpc}$、質量・形は一定 \\
+中心への重力 & 主銀河の場を衛星中心の位置で評価する近似 \\
+初期軌道 & $r_{\rm s}(0)=20\unit{kpc}$、主銀河場の円運動速度 \\
+摩擦の係数 & $\ln\Lambda=\ln(11)=2.397895\ldots$を固定 \\
+中心の時間積分 & RK4、1 Myr、1.50 Gyrまで（1500ステップ） \\\bottomrule
+\end{tabularx}
+\end{table}
+
+主銀河は衛星から引かれて動くことも、加熱されることもありません。有限サイズの衛星への重力を、その密度全体で平均しているわけでもありません。このため、第5章の相互作用を持つ二つの中心を、そのまま固定したとは説明しません。本章の目的は衛星の軌道減衰を見ることであり、自己無撞着なminor mergerの定量的予測ではありません。
+
+星を置かずに衛星中心だけを動かす段階では、$a_{\rm sat}$は中心軌道の式へ入りません。第\ref{sec:ch7-df-tracers}節の追加実習で、衛星の周りの星が受けるPlummer場に使います。また、本章には第5章の中心間有効長さ$b$はありません。
+\inputcode{chap07/df-parameters}
+
+\section{Chandrasekhar公式から摩擦加速度を求める}
+\label{sec:ch7-df-force}
+\subsection{密度と速度分散を同じ主銀河から与える}
+衛星の位置から主銀河中心までの距離を$r_{\rm s}=|\Rvec_{\rm s}|$とします。主銀河の密度には第3章のPlummer式を使います。背景の1次元速度分散には、等方的なPlummer球に対応する次の式を与えます。
+\begin{align}
+ \rho(r)&=\frac{3M_{\rm host}}{4\pi a_{\rm host}^3}
+ \left(1+\frac{r^2}{a_{\rm host}^2}\right)^{-5/2},\\
+ \sigma^2(r)&=\frac{GM_{\rm host}}{6\sqrt{r^2+a_{\rm host}^2}}.
+ \label{eq:ch7-background}
+\end{align}
+密度・ポテンシャルの定義は既習のものです。\cite{bt2008} 速度分散は新しく与える背景モデルの情報であり、円盤の円運動速度でも、3次元の速度の大きさでもありません。軌道は平面内でも、背景の速度分布は3次元で等方的とします。定義した式を用いることに集中し、分布関数からの導出は本章では行いません。
+\inputcode{chap07/host-background}
+
+局所の速度分布には、この$\sigma$を持つMaxwell分布を近似として使います。等方的Plummer球の速度分布全体が、各位置で厳密にMaxwell分布になっているという意味ではありません。密度と速度分散を解析式で与える近似と、速度分布の形を置き換える近似を区別します。
+
+\subsection{衛星の速度と逆向きの摩擦を確認する}
+主銀河の背景は平均として静止しているとします。この座標系での衛星速度を$\Vvec_{\rm s}$、その大きさを$V_{\rm s}$と書きます。背景粒子の質量が衛星質量に比べて十分小さい場合の、局所Maxwell近似によるChandrasekhar加速度を
+\begin{equation}
+ \avec_{\rm df}=-4\pi G^2M_{\rm sat}\rho\ln\Lambda\,
+ B(X)\frac{\Vvec_{\rm s}}{V_{\rm s}^3},
+ \qquad X=\frac{V_{\rm s}}{\sqrt{2}\sigma}
+ \label{eq:ch7-drag}
+\end{equation}
+とします。ここで
+\begin{equation}
+ B(X)=\operatorname{erf}(X)-\frac{2X}{\sqrt{\pi}}e^{-X^2},
+ \qquad \operatorname{erf}(X)=\frac{2}{\sqrt{\pi}}\int_0^X e^{-u^2}\,du
+ \label{eq:ch7-maxwell}
+\end{equation}
+です。本章ではこの標準形を短いPython関数として実装し、誤差関数には標準ライブラリの\texttt{math.erf}を使います。\cite{bt2008}
+
+$\rho$と$\sigma$は、各RK4段階での衛星位置から計算します。$\ln\Lambda$は、重力散乱で考える距離範囲に関係する係数です。本章では、本章の標準設定として$\ln(1+M_{\rm host}/M_{\rm sat})=\ln11$を代表値として固定します。この質量比による選択が、Plummer球に対して厳密に導かれたものではありません。
+
+\begin{notebox}{Coulomb対数の処方は一つではありません}
+$\ln\Lambda$を一定にする方法のほか、衛星の大きさ、距離、速度などで変える処方もあります。Coulomb対数には、衛星の大きさ、距離、速度などを考慮した複数の処方があります。\cite{bt2008} 本章ではそれらを追加せず、式\eqref{eq:ch7-drag}の$\ln\Lambda$を一定値として固定します。係数の違う表式を混ぜないことが重要です。
+\end{notebox}
+
+
+% BEGIN TikZ addition: ch07_friction_model
+図\ref{fig:concept-ch7-friction}では、直接計算していない背景応答と、実装する加速度を別枠にしました。摩擦の矢印は衛星中心に置かれており、後で追加する星に直接掛ける項ではありません。
+\begin{figure}[!htbp]
+\centering
+\input{figures/tikz/ch07_friction_model}
+\caption{背景応答と実装する摩擦項の区別。上段の背景応答を直接計算する代わりに、下段では衛星中心へ$\avec_{\rm df}$を与えます。静止した平均背景に対して、摩擦は衛星速度と逆向きです。追加する質量ゼロの星には摩擦を直接掛けません。矢印の長さは力の実測値ではありません。}
+\label{fig:concept-ch7-friction}
+\end{figure}
+\FloatBarrier
+% END TikZ addition: ch07_friction_model
+
+\subsection{速度0の見かけの特異点を避ける}
+式\eqref{eq:ch7-drag}には$V_{\rm s}^{-3}$がありますが、低速では$B(X)$も$X^3$に比例して0へ向かいます。式\eqref{eq:ch7-maxwell}を小さい$X$で展開すると
+\begin{equation}
+ \frac{B(X)}{X^3}
+ =\frac{4}{3\sqrt{\pi}}\left(1-\frac{3X^2}{5}+\frac{3X^4}{14}+\cdots\right)
+ \label{eq:ch7-small-x}
+\end{equation}
+となります。したがって、低速極限では有限な係数を持つ$-\Vvec_{\rm s}$型の加速度になり、$\Vvec_{\rm s}=0$なら摩擦も0です。
+
+コードでは$B/X^3$を返す関数を用意し、$X<10^{-3}$でこの級数を使います。それ以外では誤差関数を直接評価します。これは摩擦の発散を隠すために速度へ小さな数を足す操作ではなく、同じ式の連続な低速極限を計算するためです。級数の導出全体や特殊関数の実装は、本書の主要課題にはしません。
+\inputcode{chap07/small-speed}
+\inputcode{chap07/chandra-drag}
+
+\texttt{gamma}は$\avec_{\rm df}=-\gamma\Vvec_{\rm s}$とまとめた係数で、一般には位置・速度に依存します。$\gamma$の単位は時間の逆数です。第1章の速度比例抵抗で使った一定の係数と、同じ関数形ではありません。\texttt{scale\_v}$=\sqrt2\sigma$を使い、$B/V^3=(B/X^3)/(\sqrt2\sigma)^3$として評価しています。
+
+\section{RK4で軌道減衰を調べる}
+\label{sec:ch7-df-integrate}
+\subsection{運動方程式の右辺に動力学的摩擦を加える}
+衛星中心の運動方程式は
+\begin{align}
+ \frac{d\Rvec_{\rm s}}{dt}&=\Vvec_{\rm s},\\
+ \frac{d\Vvec_{\rm s}}{dt}&=-\frac{GM_{\rm host}\Rvec_{\rm s}}
+ {(r_{\rm s}^2+a_{\rm host}^2)^{3/2}}+\avec_{\rm df}(\Rvec_{\rm s},\Vvec_{\rm s})
+ \label{eq:ch7-df-ode}
+\end{align}
+です。重力と摩擦を合わせた加速度が速度にも依存します。位置を固定して単純に$\Delta t\avec$を加える、既習の陽的KDKのkickをそのまま流用しません。第1章のRK4を使い、各段階で位置と速度を一緒に予測します。
+\inputcode{chap07/df-rhs}
+\inputcode{chap07/rk4-step}
+
+RK4の4段階の構造は第1章と同じです。最後の引数を背景・衛星のパラメータ辞書に変えただけです。中心だけの状態は形$(1,4)$で、各行の順は$[x,y,v_x,v_y]$です。摩擦を切る場合は、初期値とRK4の刻みを保ち、\texttt{friction=False}とします。摩擦あり・なしの差へ、別の積分器の差を混ぜません。
+
+速度依存力を扱えるのがRK4だけ、という意味ではありません。分割法や陰的な更新を組み合わせる方法もありますが、ここでは既習の主要手法を再利用します。RK4は1ステップで4回の右辺評価を行うので、中心だけの1500ステップでは6000回です。
+
+\subsection{摩擦なしの円軌道を基準にする}
+同じ初期値から、摩擦あり・なしを$1.50\unit{Gyr}$まで計算します。摩擦なしでは、衛星中心は主銀河の静的な場の円軌道を回り、半径はほぼ20 kpcのままです。摩擦ありでは、今回の計算の最終半径は$\chsevenvalRdf\unit{kpc}$になりました。
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.63\linewidth]{\figpath{ch07_df_orbit}}
+\caption{固定Plummer主銀河中の衛星中心軌道。灰色破線は摩擦なし、青実線は摩擦ありです。主銀河中心は固定で、主銀河への反作用は計算しません。}\label{fig:ch7-df-orbit}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.76\linewidth]{\figpath{ch07_df_radius}}
+\caption{衛星中心半径の比較。$\ln\Lambda=\ln11$、初期半径20 kpc、RK4の刻み1 Myrです。この半径の減少はモデル内での軌道減衰であり、自己無撞着な銀河合体の完了判定ではありません。}\label{fig:ch7-df-radius}
+\end{figure}
+
+本節では$1.50\unit{Gyr}$で計算を終えます。$r_{\rm s}=0$に達するまで積分して、その時刻を合体時刻と呼ぶことはしません。衛星の質量損失、主銀河の変形、合体後の緩和が含まれていないからです。
+
+\subsection{保存しない量の変化率を調べる}
+衛星中心の比エネルギーと比角運動量を
+\begin{equation}
+ \varepsilon_{\rm s}=\frac{V_{\rm s}^2}{2}
+ -\frac{GM_{\rm host}}{\sqrt{r_{\rm s}^2+a_{\rm host}^2}},
+ \qquad \ell_{z,\rm s}=X_{\rm s}V_{y,\rm s}-Y_{\rm s}V_{x,\rm s}
+ \label{eq:ch7-satellite-invariants}
+\end{equation}
+とします。主銀河のポテンシャルが時間に依存しないので、式\eqref{eq:ch7-df-ode}から
+\begin{equation}
+ \frac{d\varepsilon_{\rm s}}{dt}=\Vvec_{\rm s}\cdot\avec_{\rm df}
+ =-\gamma V_{\rm s}^2\leq0,
+ \qquad \frac{d\ell_{z,\rm s}}{dt}=-\gamma\ell_{z,\rm s}
+ \label{eq:ch7-df-balance}
+\end{equation}
+を得ます。摩擦なしのときだけ両者は保存量です。$\ell_{z,\rm s}>0$の本例では、摩擦ありで角運動量も減少します。速度の大きさや運動エネルギー単独まで単調に減るとは限りません。中心へ近づくと、より深いポテンシャルの中を運動するためです。
+\inputcode{chap07/df-diagnostics}
+
+摩擦なしの最大相対誤差は、エネルギーで$\chsevenvalEno$、角運動量で$\chsevenvalLno$でした。摩擦ありの終時刻では$\varepsilon_{\rm s}(t)/|\varepsilon_{\rm s}(0)|=\chsevenvalEdf$、$\ell_{z,\rm s}(t)/\ell_{z,\rm s}(0)=\chsevenvalLdf$です。後者の変化を、保存系の数値誤差として扱わないことが重要です。
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.76\linewidth]{\figpath{ch07_df_energy}}
+\caption{衛星の比エネルギー。四角は初期エネルギーへ、保存された摩擦の仕事率を台形則で積分した値を足したものです。減少の符号と大きさが式\eqref{eq:ch7-df-balance}と整合するかを確かめます。}\label{fig:ch7-df-energy}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.76\linewidth]{\figpath{ch07_df_angular}}
+\caption{衛星の比角運動量。摩擦なしではほぼ一定、摩擦ありでは正の初期値から減少します。背景が受け取った角運動量を別の粒子で測定しているわけではありません。}\label{fig:ch7-df-angular}
+\end{figure}
+
+ここでエネルギーを受け取る背景の自由度は、実際には計算していません。式\eqref{eq:ch7-df-balance}は衛星に課した運動方程式の収支です。「衛星と主銀河を合わせた全エネルギーを数値的に保存できた」と解釈しないようにします。
+
+\section{数値誤差とモデルの近似を区別する}
+\label{sec:ch7-df-validation}
+\subsection{摩擦ありでも刻みを細かくする}
+RK4の刻みを4、2、1、0.5 Myrにして、同じ初期値から同じ1.50 Gyrまで計算します。隣接する二つの計算を粗い側の保存時刻にそろえ、衛星中心の位置差を
+\begin{equation}
+ \delta_{\rm s}(h)=\frac{\max_j|\Rvec_{{\rm s},h}(t_j)-\Rvec_{{\rm s},h/2}(t_j)|}{20\unit{kpc}}
+ \label{eq:ch7-df-convergence}
+\end{equation}
+で測ります。主要な誤差が$Ch^4$なら、隣接する差の比は16へ近づくはずです。
+\begin{table}[htbp]\centering\small
+\caption{摩擦ありのRK4の刻み試験。「次行との差」は式\eqref{eq:ch7-df-convergence}です。最終行には比較相手がありません。$e_{\rm work}$は後処理の仕事積分を含む別の指標です。}\label{tab:ch7-df-resolution}
+\input{generated/chap07/df_resolution_table}
+\end{table}
+
+細かい側の差の比は$\chsevenvalDfRatio$で、16へ近づいています。一方、これらの差は真の軌道との誤差を直接測ったものではありません。また、数値解が収束しても、Chandrasekhar近似自体の物理的な正確さが同じ精度で保証されるわけではありません。
+
+\subsection{仕事の数値積分に由来する誤差を評価する}
+式\eqref{eq:ch7-df-balance}を時間積分すれば
+\begin{equation}
+ \varepsilon_{\rm s}(t)-\varepsilon_{\rm s}(0)
+ =\int_0^t \Vvec_{\rm s}\cdot\avec_{\rm df}\,dt'
+ \label{eq:ch7-drag-work}
+\end{equation}
+です。右辺を、保存した仕事率から既習の台形則で近似します。この累積仕事を$\widehat W(t)$とし、
+\begin{equation}
+ e_{\rm work}=\max_j\frac{|\varepsilon_{\rm s}(t_j)-\varepsilon_{\rm s}(0)-\widehat W(t_j)|}
+ {|\varepsilon_{\rm s}(0)|}
+ \label{eq:ch7-work-error}
+\end{equation}
+を確認します。標準の1 Myrでは$\chsevenvalWorkResidual$でした。
+
+表\ref{tab:ch7-df-resolution}では、この残差は刻みを半分にするとおよそ1/4になります。位置のRK4誤差が4次でも、後処理の合成台形則は2次の誤差を持つためです。\textbf{仕事積分の残差だけを見て、RK4が2次へ低下したとは判断しません。} 第3・4章と同じく、どの処理がどの誤差を持つかを分けます。
+
+\subsection{摩擦係数の選び方による違いを比較する}
+$\ln\Lambda$を1、2、$\ln11$へ変え、その他を固定します。これは刻みの試験ではなく、摩擦モデルの強さを変えた比較です。
+\begin{table}[htbp]\centering\small
+\caption{固定Coulomb対数を変更した中心軌道。初期半径、初期速度、主銀河、衛星質量、RK4の刻み1 Myrは共通です。}\label{tab:ch7-lambda}
+\input{generated/chap07/lambda_table}
+\end{table}
+
+今回の値では、係数が大きいほど1.50 Gyr後の半径は小さくなりました。しかし、刻みをいくら細かくしても、どのCoulomb対数が物理的に最適かが自動的に決まるわけではありません。係数の処方、局所Maxwell近似、背景の固定、衛星の質量一定という仮定が残ります。
+
+\begin{notebox}{中心部までの外挿には注意します}
+Plummer球の中心側では、背景密度がほぼ一定になり、衛星の軌道半径も背景の代表的な長さに近づきます。本書の固定背景・局所Maxwell近似・固定Coulomb対数によるChandrasekhar公式は、この領域まで自己無撞着な応答を計算するモデルではありません。したがって、中心到達時刻を高精度な合体時刻として予測しません。これは計算を細かくすることだけでは解決しない、モデルの適用範囲の問題です。
+\end{notebox}
+
+\section{衛星の周りの星も動かす}
+\label{sec:ch7-df-tracers}
+中心の軌道減衰を確認した後、衛星の周りへ500個のテスト粒子を置けます。初期円盤は$R_{\rm d,sat}=1\unit{kpc}$、$R_{\max,\rm sat}=4\unit{kpc}$とし、衛星のPlummer場に対する円運動速度を与えます。生成法は第4章と同じです。位置と速度の両方へ、衛星中心の初期値を足します。
+
+先頭1行を衛星中心、残りを星とした状態配列を作ります。原点の主銀河は固定しているため、可動中心として配列へ追加しません。星の加速度は
+\begin{equation}
+ \frac{d\vvec_i}{dt}=\avec_{\rm host}(\rvec_i)
+ +\avec_{\rm sat}(\rvec_i-\Rvec_{\rm s})
+ \label{eq:ch7-tracer-force}
+\end{equation}
+です。Chandrasekhar摩擦は、この式には直接加えません。摩擦が変えた衛星中心の運動を通じて、星が受ける時間依存の場が変わります。
+\inputcode{chap07/df-with-tracers}
+
+\texttt{df\_center\_rhs}を先頭行へ使い、残りの行に二つの重力場を加えます。RK4の各段階では、予測された衛星位置と星の位置を一緒に使います。衛星中心だけRK4、星だけKDKとして同期させる方法も考えられますが、本書では別の同期処理を追加せず、本章の全配列をRK4で進めます。
+
+この追加実習では、中心だけの1 Myrより細かい0.25 Myrを標準にします。1.50 Gyrまで6000ステップ、10 Myrごとに151状態を保存します。同じ初期値を0.125 Myrでも計算したとき、全保存時刻・全星の最大位置差は$R_{\rm d,sat}$単位で$\chsevenvalSatMax$、二乗平均平方根は$\chsevenvalSatRms$でした。二つの数値解の差として記録し、自己無撞着な衛星崩壊の精度とは解釈しません。
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.63\linewidth]{\figpath{ch07_satellite}}
+\caption{摩擦ありの衛星と、その出身星の1.50 Gyr後の位置。青点は質量ゼロのテスト粒子です。星が広がっても、衛星の$M_{\rm sat}$や$a_{\rm sat}$は変更していません。表示範囲は両軸とも$\pm30\unit{kpc}$で、範囲外の粒子も計算には保持しています。}\label{fig:ch7-satellite}
+\end{figure}
+
+星が離れても、衛星質量が減り、それに応じて摩擦が弱まるという処理はありません。図\ref{fig:ch7-satellite}を衛星の自己無撞着な質量損失計算とは呼べません。さらに、有限距離から与えた衛星円盤は、主銀河を含む合成場の厳密な平衡でもありません。この追加実習の主な到達点は、中心の速度依存力と、それに伴う移動ポテンシャルの更新を同じRK4の枠組みで扱うことです。
+
+\section{本章のまとめ}
+\label{sec:ch7-summary}
+本章では、固定したPlummer主銀河の中を回る衛星銀河にChandrasekhar動力学的摩擦を加えました。背景密度と速度分散は主銀河のPlummerモデルから与え、局所速度分布をMaxwell分布で近似し、Coulomb対数を一定値として扱いました。背景粒子や重力wakeそのものを計算したわけではありません。
+
+摩擦加速度は速度にも依存するため、本書の標準的なKDKをそのまま使わず、第1章で学んだRK4へ戻りました。摩擦なしでは比エネルギーと比角運動量がほぼ保存され、摩擦ありでは両者が物理的に減少しました。仕事率とエネルギー変化の収支、時間刻みを変えた位置の自己収束を別々に確認しました。
+
+Coulomb対数を変えることは摩擦モデルの変更であり、時間刻みを細かくする数値精度の変更とは異なります。また、衛星の周りへ星を置いても、星の離脱に応じて衛星質量を減らす処理や、主銀河の変形は含めていません。本章の軌道減衰を、自己無撞着な合体時刻の予測とはみなしません。
+
+\chapterexercises
+\paragraph{演習7.1　確認：摩擦の向きと低速極限}
+式\eqref{eq:ch7-drag}を$\avec_{\rm df}=-\gamma\Vvec_{\rm s}$の形にし、$\gamma$の単位を求めてください。$\ln\Lambda\geq0$で$\Vvec_{\rm s}\cdot\avec_{\rm df}\leq0$となること、速度を反転すると摩擦も反転すること、速度0で有限な0を返すことを、コードでも確認してください。
+
+\paragraph{演習7.2　確認：摩擦なしを基準にする}
+同じ初期値とRK4の刻みで、摩擦あり・なしを計算してください。摩擦なしで半径、比エネルギー、比角運動量がほぼ一定になることを確認し、摩擦ありでそれらが変化する場合との意味の違いを説明してください。
+
+\paragraph{演習7.3　応用：軌道減衰と数値誤差}
+摩擦ありの仕事積分の残差と、隣接するRK4解の位置差を時間刻みで比較してください。仕事残差が約2次、位置差が約4次の振る舞いを示し得る理由を、それぞれに使っている数値算法から説明してください。
+
+\paragraph{演習7.4　応用：Coulomb対数を変える}
+$\ln\Lambda=1,2,\ln11$を比べ、1.50 Gyr後の衛星半径を表\ref{tab:ch7-lambda}から確認してください。この変更を時間刻みの収束試験と呼べない理由を述べてください。また、係数を大きくするほど常に現実の銀河をよく再現する、と結論できるでしょうか。
+
+\paragraph{演習7.5　発展：衛星の星とモデルの限界}
+第\ref{sec:ch7-df-tracers}節の500粒子計算を再実行し、0.25 Myrと0.125 Myrの結果を比較してください。星が衛星中心から離れても$M_{\rm sat}$を一定にしていることが、軌道減衰と質量損失の解釈にどのような制限を与えるか説明してください。主銀河の応答を計算していないことも含め、本章から決められない量を挙げてください。

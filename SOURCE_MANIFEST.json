@@ -1,0 +1,32 @@
+{
+  "title": "Pythonによる はじめての銀河シミュレーション",
+  "subtitle": "テスト粒子で学ぶ重力・軌道・銀河相互作用",
+  "release": "2.5",
+  "date": "2026-10-08",
+  "chapters": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "backmatter": [
+    "演習の解答・着眼点",
+    "参考図書"
+  ],
+  "pages": 170,
+  "figures": 56,
+  "outline": "guide/outline_v9.pdf",
+  "style_guide": "guide/style_guide_v1_8.pdf",
+  "validation": "validation/release_checks.json",
+  "notes": "第6章は比較実験、第7章は動力学的摩擦と軌道減衰。第1--7章末は「本章のまとめ→演習」、解答と参考図書は巻末へ集約。",
+  "editorial_revision": "v2.5 heading style consolidation",
+  "editorial_guide_versions": {
+    "outline": "v9",
+    "style": "v1.8"
+  },
+  "publication_review_date": "2026-11-12"
+}

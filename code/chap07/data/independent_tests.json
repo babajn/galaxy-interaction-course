@@ -1,0 +1,174 @@
+{
+  "passed": 42,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "drag removes satellite orbital energy",
+      "passed": true
+    },
+    {
+      "name": "drag is parallel to minus velocity",
+      "passed": true
+    },
+    {
+      "name": "drag reverses with velocity",
+      "passed": true
+    },
+    {
+      "name": "zero-speed limit finite and zero",
+      "passed": true
+    },
+    {
+      "name": "zero Coulomb log gives zero drag",
+      "passed": true
+    },
+    {
+      "name": "fixed-background drag proportional to satellite mass",
+      "passed": true
+    },
+    {
+      "name": "drag proportional to fixed Coulomb log",
+      "passed": true
+    },
+    {
+      "name": "low speed drag linear",
+      "passed": true
+    },
+    {
+      "name": "Maxwell factor independent quadrature X=0",
+      "passed": true
+    },
+    {
+      "name": "Maxwell factor independent quadrature X=1e-12",
+      "passed": true
+    },
+    {
+      "name": "Maxwell factor independent quadrature X=0.0001",
+      "passed": true
+    },
+    {
+      "name": "Maxwell factor independent quadrature X=0.001",
+      "passed": true
+    },
+    {
+      "name": "Maxwell factor independent quadrature X=0.1",
+      "passed": true
+    },
+    {
+      "name": "Maxwell factor independent quadrature X=1",
+      "passed": true
+    },
+    {
+      "name": "Maxwell factor independent quadrature X=3",
+      "passed": true
+    },
+    {
+      "name": "Maxwell factor independent quadrature X=5",
+      "passed": true
+    },
+    {
+      "name": "negative X rejected",
+      "passed": true
+    },
+    {
+      "name": "nonfinite X rejected",
+      "passed": true
+    },
+    {
+      "name": "negative logLambda rejected",
+      "passed": true
+    },
+    {
+      "name": "boolean logLambda rejected",
+      "passed": true
+    },
+    {
+      "name": "negative satellite mass rejected",
+      "passed": true
+    },
+    {
+      "name": "friction flag requires boolean",
+      "passed": true
+    },
+    {
+      "name": "center RHS wrong row count rejected",
+      "passed": true
+    },
+    {
+      "name": "Plummer pressure derivative r=1",
+      "passed": true
+    },
+    {
+      "name": "Plummer pressure derivative r=3",
+      "passed": true
+    },
+    {
+      "name": "Plummer pressure derivative r=20",
+      "passed": true
+    },
+    {
+      "name": "RK4 n steps uses 4n RHS calls",
+      "passed": true
+    },
+    {
+      "name": "RK4 leaves initial array unchanged",
+      "passed": true
+    },
+    {
+      "name": "RK4 always stores final state",
+      "passed": true
+    },
+    {
+      "name": "friction=False equals logLambda=0",
+      "passed": true
+    },
+    {
+      "name": "zero step count rejected",
+      "passed": true
+    },
+    {
+      "name": "nonfinite initial state rejected",
+      "passed": true
+    },
+    {
+      "name": "no-drag circle radius",
+      "passed": true
+    },
+    {
+      "name": "no-drag energy conserved within tolerance",
+      "passed": true
+    },
+    {
+      "name": "drag energy monotonically decreases in standard run",
+      "passed": true
+    },
+    {
+      "name": "drag angular momentum decreases in standard run",
+      "passed": true
+    },
+    {
+      "name": "standard friction final radius in expected range",
+      "passed": true
+    },
+    {
+      "name": "every stored drag power nonpositive",
+      "passed": true
+    },
+    {
+      "name": "energy change agrees with postprocessed drag work",
+      "passed": true
+    },
+    {
+      "name": "friction does not directly act on star RHS",
+      "passed": true
+    },
+    {
+      "name": "center RHS includes drag only once",
+      "passed": true
+    },
+    {
+      "name": "RK4 center independent of tracer population",
+      "passed": true
+    }
+  ]
+}

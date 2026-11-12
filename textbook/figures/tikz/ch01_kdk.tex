@@ -1,0 +1,18 @@
+% KDK algorithm: vertical direction is operation order, NOT physical time.
+\begin{tikzpicture}[textbook diagram]
+  \node[anchor=west,font=\sffamily\bfseries] at (0,0.65) {KDK: one time step};
+  \node[state] (in) at (3,0) {$\boldsymbol r^n,\quad\boldsymbol v^n$};
+  \node[hint,text width=38mm,anchor=west] at (6.6,0) {Input at $t_n$\\Known: $\boldsymbol a^n=\boldsymbol a(\boldsymbol r^n)$};
+  \node[state] (kick) at (3,-1.65) {$\boldsymbol r^n,\quad\boldsymbol v^{n+1/2}$};
+  \draw[vector,figblue] (in.south) -- node[right,fill=white,inner sep=2pt] {Half kick: $\Delta t/2$} (kick.north);
+  \node[hint,text width=41mm,anchor=west] at (6.6,-1.65) {$\boldsymbol v^{n+1/2}=\boldsymbol v^n+\frac{\Delta t}{2}\boldsymbol a^n$\\Position unchanged};
+  \node[state] (drift) at (3,-3.30) {$\boldsymbol r^{n+1},\quad\boldsymbol v^{n+1/2}$};
+  \draw[vector,figred] (kick.south) -- node[right,fill=white,inner sep=2pt] {Drift: $\Delta t$} (drift.north);
+  \node[hint,text width=41mm,anchor=west] at (6.6,-3.30) {$\boldsymbol r^{n+1}=\boldsymbol r^n+\Delta t\,\boldsymbol v^{n+1/2}$\\Evaluate $\boldsymbol a^{n+1}=\boldsymbol a(\boldsymbol r^{n+1})$};
+  \node[state,line width=0.9pt] (out) at (3,-4.95) {$\boldsymbol r^{n+1},\quad\boldsymbol v^{n+1}$};
+  \draw[vector,figblue] (drift.south) -- node[right,fill=white,inner sep=2pt] {Half kick: $\Delta t/2$} (out.north);
+  \node[hint,text width=41mm,anchor=west] at (6.6,-4.95) {$\boldsymbol v^{n+1}=\boldsymbol v^{n+1/2}+\frac{\Delta t}{2}\boldsymbol a^{n+1}$\\Save both at $t_{n+1}$};
+  \draw[vector,figgray,dashed] (10.90,-3.30) -- (11.45,-3.30) -- (11.45,-6.05) -- (6.10,-6.05);
+  \node[hint,anchor=east,text width=52mm,align=right] at (5.95,-6.05) {Reuse $\boldsymbol a^{n+1}$ in the next step.\\Only one new acceleration evaluation.};
+  \node[rotate=90,small label,text=figgray] at (-0.10,-2.45) {Operation order (not physical time)};
+\end{tikzpicture}

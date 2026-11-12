@@ -1,0 +1,571 @@
+\chapter{2体問題を計算する}
+\label{chap:two-body}
+第1章では、原点に固定した中心質量の周りを動く1個の粒子を計算しました。この章では、二つの天体が互いに重力を及ぼし、両方とも動く問題へ進みます。時間積分には、前章で学んだleapfrog法のkick--drift--kick（KDK）形式を使います。新しく作る中心的な部分は、二つの位置から両方の加速度を求める処理と、重心・相対運動を用いた初期条件です。
+
+ゼミで学んだ2体問題を、長い解析解の導出からやり直すことはしません。計算に必要な式を短く整理し、円・楕円・放物線の軌道を作ります。その後、全エネルギー、全角運動量、全運動量、重心運動を確かめます。最後に、指定した近点距離へ向かう接近軌道を作り、第5章の銀河相互作用へ向けた準備をします。
+
+\begin{goalbox}[この章で学ぶこと]
+\begin{itemize}
+\item 2天体の重力加速度を、作用・反作用を保つ形で計算できます。
+\item 重心運動と相対運動を区別し、質量比に応じた初期位置・速度を設定できます。
+\item 第1章のKDKを使って、両天体を同じ時刻へ更新できます。
+\item 初期速度を変えて円・楕円・放物線を作り、解析的な軌道の性質と比較できます。
+\item 保存量と位置の誤差を使い、時間刻みの影響を確認できます。
+\end{itemize}
+\end{goalbox}
+
+\section{一方を固定する近似を外す}
+\label{sec:ch2-model}
+\subsection{本章で計算する対象を整理する}
+質量$M_1,M_2$の2天体を考えます。両方に有限の質量があり、互いに重力を及ぼします。外部からの力はなく、質量は時間によらず一定です。慣性系の$x$--$y$平面内で運動を追跡します。
+
+本章では、各天体を大きさのない\textbf{点質量}として扱います。これは、2体問題の軌道と保存量を確かめるための練習モデルです。後の章で使う銀河の有限サイズ、円盤のテスト粒子、動力学的摩擦は、まだ入れません。とくに、2天体が同じ位置へ衝突する初期条件は扱いません。
+
+第1章では、中心天体が動かないと近似しました。今回はその近似を外すので、重い天体も動きます。質量が同じなら二つは対称に動き、質量が異なれば、重い天体ほど重心の近くを小さく動きます。まずは質量を異ならせ、この違いを見える形にします。
+
+\subsection{位置と相対位置を区別する}
+天体$k=1,2$の位置と速度を$\Rvec_k,\Vvec_k$と書きます。大文字を使うのは、後の章の銀河中心と記法をそろえるためです。天体1から天体2へ向かう相対位置と、その変化率を
+\begin{equation}
+\Dvec=\Rvec_2-\Rvec_1,\qquad D=|\Dvec|,\qquad
+\Uvec=\Vvec_2-\Vvec_1=\frac{d\Dvec}{dt}
+\label{eq:ch2-relative-def}
+\end{equation}
+と定義します。$D$は\textbf{2天体の間の距離}です。それぞれの天体から原点までの距離とは、一般に一致しません。
+
+位置の原点は、どちらかの天体へ毎回移動させるのではなく、まず一つの慣性系に固定します。天体1を原点に置いたような相対軌道の図は、計算後に式\eqref{eq:ch2-relative-def}で座標を引き算して作ります。座標を変換して表示することと、一方の天体の運動を無視することは別です。
+
+\section{二つの加速度を同じ位置から求める}
+\label{sec:ch2-force}
+\subsection{力と加速度の違いを確認する}
+天体1は天体2へ、天体2は天体1へ引かれます。式\eqref{eq:ch2-relative-def}の向きを使うと、Newtonの運動方程式は
+\begin{align}
+M_1\frac{d\Vvec_1}{dt}&=+GM_1M_2\frac{\Dvec}{D^3},\label{eq:ch2-force1}\\
+M_2\frac{d\Vvec_2}{dt}&=-GM_1M_2\frac{\Dvec}{D^3}.\label{eq:ch2-force2}
+\end{align}
+両辺をそれぞれの質量で割り、加速度$\boldsymbol A_k=d\Vvec_k/dt$を求めると、
+\begin{equation}
+\boldsymbol A_1=+GM_2\frac{\Dvec}{D^3},\qquad
+\boldsymbol A_2=-GM_1\frac{\Dvec}{D^3}
+\label{eq:ch2-acceleration}
+\end{equation}
+となります。自分自身の質量は消えますが、重力を作る相手の質量は残ります。両方とも同じ時刻の$\Rvec_1,\Rvec_2$から計算します。これらはRydenの2体問題で用いる運動方程式に対応します。\cite{ryden2025}
+
+作用・反作用の関係は
+\begin{equation}
+M_1\boldsymbol A_1+M_2\boldsymbol A_2=\boldsymbol 0
+\label{eq:ch2-force-balance}
+\end{equation}
+です。$M_1\ne M_2$なら、$\boldsymbol A_1=-\boldsymbol A_2$ではありません。例えば$M_1=2M_2$なら、天体2の加速度の大きさは天体1の2倍です。
+
+\subsection{成分で確かめてから関数にする}
+$\Dvec=(d_x,d_y)$、$D^2=d_x^2+d_y^2$と書けば、例えば$x$成分は
+\begin{equation}
+A_{1x}=\frac{GM_2d_x}{(d_x^2+d_y^2)^{3/2}},\qquad
+A_{2x}=-\frac{GM_1d_x}{(d_x^2+d_y^2)^{3/2}}
+\label{eq:ch2-acceleration-components}
+\end{equation}
+です。$y$成分も分子の$d_x$を$d_y$へ替えるだけです。天体2が天体1の右側にあれば、$A_{1x}>0$、$A_{2x}<0$となります。この単純な配置で符号を確認してから、軌道を計算します。
+
+実装では$G\Dvec/D^3$を一度だけ求め、それに相手の質量と符号を掛けます。2体問題なので、全粒子対を探索する二重ループは必要ありません。この段階では、一般的な$N$体重力計算へ広げません。
+
+\begin{failbox}{同じ大きさになるのは力です}
+二つの加速度を単に符号反転して作る実装は、等質量の場合にしか正しくありません。等質量のテストだけでは、この誤りを見落とします。本章では$M_1:M_2=2:1$を標準にして、$M_1\boldsymbol A_1+M_2\boldsymbol A_2$を確認します。
+\end{failbox}
+
+\section{重心運動と相対運動を分けて考える}
+\label{sec:ch2-cm}
+\subsection{重心が等速直線運動することを確かめる}
+全質量を$\Mtot=M_1+M_2$とし、質量で重み付けした平均位置を重心とします。
+\begin{equation}
+\Rvec_{\rm cm}=\frac{M_1\Rvec_1+M_2\Rvec_2}{\Mtot},\qquad
+\Vvec_{\rm cm}=\frac{M_1\Vvec_1+M_2\Vvec_2}{\Mtot}.
+\label{eq:ch2-cm-def}
+\end{equation}
+全運動量は$\Pvec=\Mtot\Vvec_{\rm cm}$です。式\eqref{eq:ch2-force1}と式\eqref{eq:ch2-force2}を足すと、内力が打ち消し合います。
+\begin{equation}
+\frac{d\Pvec}{dt}=\boldsymbol 0,\qquad
+\frac{d\Vvec_{\rm cm}}{dt}=\boldsymbol 0.
+\label{eq:ch2-momentum-conservation}
+\end{equation}
+したがって、$t=0$からの重心の位置は
+\begin{equation}
+\Rvec_{\rm cm}(t)=\Rvec_{\rm cm}(0)+t\Vvec_{\rm cm}(0)
+\label{eq:ch2-cm-motion}
+\end{equation}
+です。重心を静止させた座標系を重心系と呼びます。本章の標準例では、初期重心を原点、重心速度を0にします。ただし、実装の検証には、重心に速度を与えた場合も使います。
+
+\subsection{相対運動を第1章と同じ形に書く}
+今度は、天体2の加速度から天体1の加速度を引きます。式\eqref{eq:ch2-acceleration}から
+\begin{equation}
+\frac{d\Dvec}{dt}=\Uvec,\qquad
+\frac{d\Uvec}{dt}=-\mu\frac{\Dvec}{D^3},\qquad
+\mu\equiv G\Mtot
+\label{eq:ch2-relative-ode}
+\end{equation}
+を得ます。右辺の形は、第1章の固定中心質量による運動と同じです。ただし、そこでは$\mu=GM$だったのに対し、ここでは\textbf{二つの質量の和}が入ります。\cite{ryden2025}
+
+相対位置だけをこの式で計算する方法もあります。本章の主計算では両天体を直接動かし、相対運動はその結果から求めます。このようにすると、作用・反作用、重心、各天体の運動を同時に確認できます。相対運動の式は、初期条件や解析的な比較値を作るために使います。
+
+\subsection{相対位置から各天体の位置へ戻す}
+重心と相対位置が分かれば、式\eqref{eq:ch2-cm-def}と式\eqref{eq:ch2-relative-def}を連立して、二つの位置を求められます。速度にも同じ関係が成り立ちます。
+\begin{align}
+\Rvec_1&=\Rvec_{\rm cm}-\frac{M_2}{\Mtot}\Dvec,&
+\Rvec_2&=\Rvec_{\rm cm}+\frac{M_1}{\Mtot}\Dvec,\nonumber\\
+\Vvec_1&=\Vvec_{\rm cm}-\frac{M_2}{\Mtot}\Uvec,&
+\Vvec_2&=\Vvec_{\rm cm}+\frac{M_1}{\Mtot}\Uvec.
+\label{eq:ch2-inverse-transform}
+\end{align}
+重心系では$\Rvec_1,\Rvec_2$は逆方向です。それぞれの重心からの距離は
+\begin{equation}
+|\Rvec_1|=\frac{M_2}{\Mtot}D,\qquad
+|\Rvec_2|=\frac{M_1}{\Mtot}D
+\label{eq:ch2-cm-radii}
+\end{equation}
+です。二つの軌道の大きさの比は、質量比の逆数になります。どちらも同じ相対運動から作られるので、束縛された2体軌道では周期は共通です。\cite{ryden2025}
+
+
+% BEGIN TikZ addition: ch02_center_of_mass
+図\ref{fig:concept-ch2-cm}では、原点を重心とは別の場所に置きました。$\Dvec$は二つの位置ベクトルの差であり、重心からの距離でも原点からの距離でもありません。重い天体ほど重心に近いことも確認してください。
+\begin{figure}[!htbp]
+\centering
+\input{figures/tikz/ch02_center_of_mass}
+\caption{質量比$M_1:M_2=2:1$の位置関係。任意の原点$O$と重心CMを区別しています。重心からの距離の比は$1:2$です。下段は力と加速度の違いで、力の大きさは等しくても加速度の大きさは異なります。段をまたいで矢印の長さを比較しません。}
+\label{fig:concept-ch2-cm}
+\end{figure}
+\FloatBarrier
+% END TikZ addition: ch02_center_of_mass
+
+\begin{failbox}{単純な平均を重心にしない}
+$(\Rvec_1+\Rvec_2)/2$が重心になるのは等質量のときだけです。同じく、$\Vvec_1=-\Vvec_2$と置けば重心が静止するとは限りません。位置にも速度にも、式\eqref{eq:ch2-inverse-transform}の質量比を使います。
+\end{failbox}
+
+\section{初期速度から軌道を選ぶ}
+\label{sec:ch2-orbit-types}
+\subsection{円軌道を基準にする}
+相対距離が$D_0$の円軌道を考えます。相対運動の向心加速度と重力加速度を等しくすると、相対円運動速度と周期は
+\begin{equation}
+v_{\rm c}=\sqrt{\frac{\mu}{D_0}},\qquad
+\Tc=2\pi\sqrt{\frac{D_0^3}{\mu}}
+\label{eq:ch2-circle}
+\end{equation}
+です。ここでの$v_{\rm c}$は、一方の天体の速度ではなく、二つの\textbf{相対速度}の大きさです。重心系での各速度の大きさは、それぞれ$(M_2/\Mtot)v_{\rm c}$、$(M_1/\Mtot)v_{\rm c}$です。
+
+初期位置と速度を
+\begin{equation}
+\Dvec(0)=(D_0,0),\qquad \Uvec(0)=(0,\eta v_{\rm c})
+\label{eq:ch2-tangential-ic}
+\end{equation}
+と置きます。$\eta$は接線方向の初期速度を調整する無次元の数です。ここでは動径方向の初期速度は0で、$\eta>0$なら相対運動は反時計回りに始まります。
+
+\subsection{比エネルギーで軌道を分類する}
+相対運動の比エネルギーと比角運動量を
+\begin{equation}
+\varepsilon=\frac{U^2}{2}-\frac{\mu}{D},\qquad
+\ell_z=D_xU_y-D_yU_x
+\label{eq:ch2-specific-integrals}
+\end{equation}
+とします。どちらも式\eqref{eq:ch2-relative-ode}で保存されます。式\eqref{eq:ch2-tangential-ic}の初期値を代入すると、
+\begin{equation}
+\varepsilon_0=\frac{\mu}{D_0}\left(\frac{\eta^2}{2}-1\right),\qquad
+\ell_{z,0}=\eta\sqrt{\mu D_0}
+\label{eq:ch2-initial-integrals}
+\end{equation}
+です。初期速度を変えることは、同じ距離から始める軌道のエネルギーと角運動量を変えることに対応します。
+
+点質量のKepler問題では、$\varepsilon<0$の非衝突軌道は楕円、$\varepsilon=0$は放物線、$\varepsilon>0$は双曲線です。円は楕円の特別な場合です。\cite{ryden2025} 本章の3例を表\ref{tab:ch2-types}にまとめます。
+\begin{table}[htbp]
+\centering\small
+\caption{式\eqref{eq:ch2-tangential-ic}を使う3例。$D_0$と質量は共通で、変えるのは$\eta$だけです。}
+\label{tab:ch2-types}
+\begin{tabular}{llll}\toprule
+$\eta$ & 軌道 & $\varepsilon_0$ & 初期位置の意味\\\midrule
+$1$ & 円 & $-\mu/(2D_0)$ & 半径一定\\
+$0.8$ & 楕円 & $-0.68\mu/D_0$ & 遠点\\
+$\sqrt{2}$ & 放物線 & $0$ & 近点\\\bottomrule
+\end{tabular}
+\end{table}
+
+$0<\eta<1$では初期速度が円運動速度より小さいため、距離は初期位置からいったん減少します。動径速度が0だった初期位置は遠点です。$\eta=\sqrt{2}$では脱出速度に相当し、初期位置から遠ざかって戻らない放物線になります。この例の放物線は、離れた場所から近づいてくる途中ではなく、\textbf{近点から出発する軌道}です。内向きに始める接近軌道は後で別に作ります。
+
+\subsection{楕円の比較値を初期条件から求める}
+数値結果を見る前に、楕円の大きさと周期を求めておきます。Kepler軌道の軌道長半径を$a_{\rm orb}$、離心率を$e$とすると、
+\begin{equation}
+a_{\rm orb}=-\frac{\mu}{2\varepsilon},\qquad
+ e^2=1+\frac{2\varepsilon\ell_z^2}{\mu^2}
+\label{eq:ch2-orbital-elements}
+\end{equation}
+です。\cite{ryden2025} 2次元なので、角運動量の大きさの2乗は$\ell_z^2$です。$0<\eta<1$の初期条件を代入すると、
+\begin{equation}
+a_{\rm orb}=\frac{D_0}{2-\eta^2},\qquad e=1-\eta^2,
+\label{eq:ch2-ellipse-parameters}
+\end{equation}
+\begin{equation}
+D_{\rm a}=D_0,\qquad D_{\rm p}=\frac{\eta^2D_0}{2-\eta^2},\qquad
+T_{\rm ell}=2\pi\sqrt{\frac{a_{\rm orb}^3}{\mu}}.
+\label{eq:ch2-ellipse-reference}
+\end{equation}
+添字aは遠点、pは近点です。$a_{\rm orb}$は相対軌道の長半径であり、後のPlummerモデルのスケール長ではありません。
+
+\begin{notebox}{軌道の形と時間の関係}
+楕円の形が分かっても、任意の時刻の位置を直ちに計算できるとは限りません。Kepler方程式を解いて時刻と軌道上の位置を対応させる方法もありますが、本章ではその求根算法を追加しません。円の同時刻の解析解と、楕円の解析周期後の戻り位置を、独立な位置の確認に使います。詳しい軌道の記述は文献\cite{ryden2025}に譲ります。
+\end{notebox}
+
+\section{Pythonで初期条件と重力を実装する}
+\label{sec:ch2-implementation}
+\subsection{単位・配列・標準条件をそろえる}
+距離はkpc、時間はGyr、質量は$\Msun$とし、内部速度を$\mathrm{kpc\,Gyr^{-1}}$にそろえます。重力定数と速度の換算係数は第1章と同じです。以下では\texttt{import numpy as np}と\texttt{import matplotlib.pyplot as plt}を実行済みとします。
+
+標準条件は本教材のために設定したもので、特定の実在天体の再現を目的としません。とくに、本章の天体は$10^{11}\Msun$程度の質量を持っていても、銀河の内部構造を持たない点質量です。
+\inputcode{chap02/parameters}
+
+\begin{table}[htbp]
+\centering\small
+\caption{本章の標準条件。3ケースとも同じ$\Tc$まで1000ステップで計算します。楕円の周期$T_{\rm ell}$とは区別します。数値は実行結果から生成しています。}
+\label{tab:ch2-parameters}
+\begin{tabular}{ll}\toprule
+量 & 値\\\midrule
+$M_1,M_2$ & $10^{11}\Msun,\ 5\times10^{10}\Msun$\\
+$D_0$ & $20\unit{kpc}$\\
+$v_{\rm c}$ & $\chtwovalVc\unit{km\,s^{-1}}$\\
+$\Tc$ & $\chtwovalTc\unit{Gyr}$\\
+$\Delta t=\Tc/1000$ & $\chtwovalDt\unit{Myr}$\\
+$\eta$ & $1,\ 0.8,\ \sqrt{2}$\\
+$\Rvec_{\rm cm}(0),\Vvec_{\rm cm}(0)$ & いずれも$\boldsymbol 0$\\\bottomrule
+\end{tabular}
+\end{table}
+
+\texttt{masses[0]}が$M_1$、\texttt{masses[1]}が$M_2$です。位置配列\texttt{pos}と速度配列\texttt{vel}は形\texttt{(2, 2)}で、行が天体、列が$x,y$成分です。両者を横につないだ\texttt{state}は形\texttt{(2, 4)}で、各行に\texttt{[x, y, vx, vy]}を入れます。第1章の約束を変えず、天体の行を1行から2行へ増やしています。
+
+\subsection{初期条件を関数にまとめる}
+式\eqref{eq:ch2-inverse-transform}を関数にします。入力の\texttt{separation}は相対位置ベクトル、\texttt{relative\_\allowbreak velocity}は相対速度ベクトルです。どちらも2成分を渡します。重心位置・速度を省略したときは0とします。
+\inputcode{chap02/initial-state}
+\texttt{check\_masses}は、二つの質量が有限かつ正であることを確かめる短い補助関数です。実装はNotebookに含めています。検証のための分岐と、初期値を作る物理の式を区別して読んでください。
+
+$D_0=20\unit{kpc}$、質量比$2:1$では、重心系の初期位置は$(-20/3,0)\unit{kpc}$と$(40/3,0)\unit{kpc}$です。二つの距離を足すと$20\unit{kpc}$になり、質量で重み付けした平均は0になります。
+
+\subsection{同じ粒子対を使って加速度を返す}
+最初に成分のまま計算し、向きと大きさを確認します。ここでは\texttt{state0}に上で作った初期値を入れたとします。
+\inputcode{chap02/acceleration-scalar}
+この初期位置で、天体1の$x$加速度は約$+562.31\unit{kpc\,Gyr^{-2}}$、天体2は約$-1124.62\unit{kpc\,Gyr^{-2}}$です。$y$成分はいずれも0です。重い天体1の加速度が小さくなっています。
+
+次は、同じ計算を2成分のベクトルでまとめます。
+\inputcode{chap02/acceleration-two-body}
+\texttt{dr}が$\Dvec$、\texttt{np.dot(dr, dr)}が$D^2$です。返り値も形\texttt{(2, 2)}にそろえます。分母へ小さな数を足して特異点を隠しません。点質量モデルで距離が0なら、その条件はこのコードの対象外として停止します。
+
+確認：\texttt{masses[0] * acc[0] + masses[1] * acc[1]}が、丸め誤差の範囲で0になっているか確かめてください。これは軌道を積分する前にできる確認です。
+
+\section{KDKで両天体を同時に進める}
+\label{sec:ch2-kdk}
+\subsection{積分器ではなく加速度関数を替える}
+時刻$t_n$における2天体の状態が分かっているとします。KDKを、それぞれの天体$k=1,2$に対して
+\begin{align}
+\Vvec_k^{n+1/2}&=\Vvec_k^n+\frac{\Delta t}{2}\boldsymbol A_k^n,\nonumber\\
+\Rvec_k^{n+1}&=\Rvec_k^n+\Delta t\Vvec_k^{n+1/2},\nonumber\\
+\boldsymbol A_k^{n+1}&=\boldsymbol A_k(\Rvec_1^{n+1},\Rvec_2^{n+1}),\nonumber\\
+\Vvec_k^{n+1}&=\Vvec_k^{n+1/2}+\frac{\Delta t}{2}\boldsymbol A_k^{n+1}
+\label{eq:ch2-kdk}
+\end{align}
+の順に行います。半整数ステップの速度は途中で使う値です。履歴には最後のkickを終えた、整数時刻の位置と速度を保存します。KDKの性質と導出は第1章で学んだ内容を使います。\cite{simten2007}
+
+両天体の最初のkickを終えてから両天体をdriftし、その\textbf{新しい2位置をそろえて}次の加速度を計算します。配列全体を更新することで、この順序を簡単に保てます。
+\inputcode{chap02/leapfrog-step}
+第1章から変えたのは、最後の引数名を\texttt{mu}から\texttt{masses}へ替えた点です。今回は加速度関数に二つの質量を渡す必要があるためです。KDKの4行の計算と、加速度を返して再利用する構造は変わりません。
+
+\begin{failbox}{片方だけを先に次の時刻へ進めない}
+天体1の位置を更新してから、その新しい位置と天体2の古い位置を使って天体2を更新すると、式\eqref{eq:ch2-kdk}とは別の計算になります。同じ時刻に対する作用・反作用もそろいません。全天体のdriftを終えてから、次の加速度を一度に求めます。
+\end{failbox}
+
+\subsection{更新を繰り返して履歴を作る}
+最初の加速度だけをループの前で求めます。その後は、前ステップで返された加速度を次の最初のkickに使います。
+\inputcode{chap02/integrate-leapfrog}
+\texttt{prepare\_history}は第1章と同じ役割の補助関数ですが、今回は初期状態の形\texttt{(2, 4)}を確認します。正のステップ数と最終時刻、有限の初期値を確認し、コピーと保存領域を用意します。履歴の形は\texttt{(n\_steps + 1, 2, 4)}です。
+
+\texttt{history[n, 1, :2]}は時刻$t_n$における天体2の位置です。最初の軸が時間、次が天体、最後が位置・速度の成分であることを、確認してください。初期値も保存するので、出力時刻の数はステップ数より1つ多くなります。
+
+本章でも、$N_{\rm step}$ステップのための加速度関数の呼び出しは$N_{\rm step}+1$回です。1回の呼び出しで\textbf{両方の加速度}を求めます。1000ステップなら1001回です。粒子対の計算が1組なので、高速化手法や並列化は必要ありません。
+
+\subsection{3ケースを同じ条件で計算する}
+各ケースの初期状態を作り直し、独立に積分します。一つの計算の最終状態を、次のケースの初期状態へ流用しないようにします。
+\inputcode{chap02/run-cases}
+本章の時間積分はすべてKDKです。RK4やEuler法との再比較は行いません。今回は積分法ではなく、初期条件、相対運動、保存量に注目します。
+
+\section{重心系と相対座標で軌道を見る}
+\label{sec:ch2-figures}
+\subsection{2天体の軌道中心を確認する}
+まず$\eta=0.8$の楕円の場合に、二つの軌道を別々に描きます。青実線と丸が天体1、朱色破線と四角が天体2、黒い星印が重心です。両天体の軌道を同じ軸に重ねると、重い天体が重心の近くを動いていることが分かります。
+\inputcode{chap02/plot-barycentric}
+\begin{figure}[htbp]
+\centering\includegraphics[width=0.64\linewidth]{\figpath{ch02_barycentric}}
+\caption{質量比$M_1:M_2=2:1$の楕円軌道を重心系で表示した結果。丸・四角は初期位置です。二つの軌道は重心を共通の焦点とし、大きさの比は$1:2$です。計算時間は$\Tc$で、楕円の約$\chtwovalEllPeriods$周期に相当します。}
+\label{fig:ch2-barycentric}
+\end{figure}
+
+原点に星印があるからといって、そこに第3の質量を置いたわけではありません。力を及ぼしているのは、動いている2天体だけです。重心は、二つの質量から定義する位置です。
+
+Notebookではこの履歴からアニメーションも作ります。画面の再生間隔を変えても、計算した軌道や物理的な時間は変わりません。本文の図も保存することで、動画なしでも軌道の違いを読めるようにします。
+
+\subsection{相対軌道の形を比較する}
+履歴の各時刻で天体2の位置から天体1の位置を引くと、相対軌道が得られます。式\eqref{eq:ch2-relative-ode}を満たす軌道として、円・楕円・放物線を比べられます。
+
+本章の接線速度から始める初期条件では、相対位置の極角を$\phi$として、解析的な形を
+\begin{equation}
+D(\phi)=\frac{\eta^2D_0}{1+(\eta^2-1)\cos\phi}
+\label{eq:ch2-conic}
+\end{equation}
+と書けます。これはKepler軌道の式へ初期条件を代入し、$\phi=0$を初期位置に選んだものです。\cite{ryden2025} $0<\eta<1$ではその位置が遠点なので、通常の「近点を角度0にする」式と分母の符号が異なって見えます。
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=0.70\linewidth]{\figpath{ch02_relative_orbits}}
+\caption{同じ$D_0$から、初期接線速度だけを変えた相対軌道。3ケースとも同じ$\Tc$まで計算しています。白抜き丸は式\eqref{eq:ch2-conic}による解析的な軌道形状上の点で、等時間間隔の点ではありません。星印は共通の初期相対位置です。}
+\label{fig:ch2-relative}
+\end{figure}
+
+図\ref{fig:ch2-relative}の原点は相対座標での基準点です。この図だけでは、天体1が元の慣性系で静止しているようにも見えますが、実際の計算では図\ref{fig:ch2-barycentric}のように両天体が動いています。
+
+また、解析的な曲線に数値解が重なっても、時刻と位置の対応まで正しいとは限りません。軌道の形の確認と、同じ時刻における位置の確認を分けて行います。
+
+\section{2体系の保存量を確かめる}
+\label{sec:ch2-conservation}
+\subsection{全エネルギーと全角運動量を求める}
+第1章では1粒子の比エネルギーを計算しました。今回は二つの質量を掛けた\textbf{全エネルギー}を計算します。2天体の運動エネルギーと、1組の粒子対のポテンシャルエネルギーは
+\begin{equation}
+K=\frac12M_1V_1^2+\frac12M_2V_2^2,\qquad
+W=-\frac{GM_1M_2}{D},\qquad E=K+W
+\label{eq:ch2-total-energy}
+\end{equation}
+です。距離$D$が変わると$K$と$W$はそれぞれ変わりますが、その和は一定です。例えば
+\begin{equation}
+\frac{dK}{dt}=-\frac{GM_1M_2}{D^3}\Dvec\cdot\Uvec,\qquad
+\frac{dW}{dt}=+\frac{GM_1M_2}{D^3}\Dvec\cdot\Uvec
+\label{eq:ch2-energy-balance}
+\end{equation}
+となり、変化率が打ち消し合います。\textbf{片方の天体のエネルギーだけを保存量としない}ことが、第1章との違いです。
+
+固定した原点の周りの全角運動量の$z$成分は
+\begin{equation}
+L_z=\sum_{k=1}^{2}M_k(X_kV_{ky}-Y_kV_{kx})
+\label{eq:ch2-total-angular}
+\end{equation}
+です。二つの内力は同じ直線上で逆向きに働くので、全トルクは0です。全角運動量も保存されます。全運動量$\Pvec$と重心の等速直線運動は、式\eqref{eq:ch2-momentum-conservation}、式\eqref{eq:ch2-cm-motion}で確かめます。
+
+\begin{failbox}{ポテンシャルエネルギーを2回足さない}
+粒子対のエネルギーは$-GM_1M_2/D$を1回だけ数えます。$M_1\Phi_2(\Rvec_1)+M_2\Phi_1(\Rvec_2)$をそのまま足すと、同じ相互作用を2回数えてしまいます。各天体で計算してから足す書き方では、全体に$1/2$が必要です。
+\end{failbox}
+
+\subsection{全エネルギーと相対運動の比エネルギーを区別する}
+式\eqref{eq:ch2-specific-integrals}の$\varepsilon$と、式\eqref{eq:ch2-total-energy}の$E$は別の量です。この関係を整理するため、換算質量を
+\begin{equation}
+\mred=\frac{M_1M_2}{\Mtot}
+\label{eq:ch2-reduced-mass}
+\end{equation}
+とします。式\eqref{eq:ch2-inverse-transform}を$K$へ代入すると、重心速度と相対速度の交差項が消え、
+\begin{equation}
+E=\frac12\Mtot V_{\rm cm}^2+\mred\varepsilon
+\label{eq:ch2-energy-decomposition}
+\end{equation}
+です。同じように、
+\begin{equation}
+L_z=\Mtot(\Rvec_{\rm cm}\times\Vvec_{\rm cm})_z+\mred\ell_z
+\label{eq:ch2-angular-decomposition}
+\end{equation}
+となります。重心系では、$E=\mred\varepsilon$、$L_z=\mred\ell_z$です。\cite{ryden2025}
+
+$\mu=G\Mtot$は重力の強さを表すパラメータ、$\mred$は質量です。同じ記号で呼ばないようにします。$\varepsilon$の単位は$\mathrm{kpc^2\,Gyr^{-2}}$、$E$はそれに$\Msun$を掛けた単位です。また、束縛・非束縛の分類に使うのは\textbf{相対運動の}$\varepsilon$です。系全体を速く動かしたときの、任意の慣性系での$E$の符号ではありません。
+
+\subsection{履歴から数値を求める}
+位置と速度は、KDKの最後のkickまで終えた同じ時刻の値を使います。以下では履歴から各天体の量を取り出し、全エネルギー、全角運動量、全運動量、重心をまとめて返します。
+\inputcode{chap02/diagnostics}
+この関数は各保存量を保存するように補正するものではありません。得られた履歴を読み取り、値を計算するだけです。結果を見て毎ステップ重心や速度を修正すると、もとの積分器の誤差を評価できなくなります。
+
+\subsection{初期値が0の量は相対誤差にしない}
+重心系では$\Pvec(0)=\boldsymbol 0$です。放物線では、理論的に$E(0)=0$でもあります。これらを分母にした「相対誤差」は定義できません。浮動小数点計算で初期エネルギーが小さな非零値になっていても、それで割るのは不適切です。
+
+そこで、本章では初期距離と相対円運動速度から、共通の正の基準量を作ります。
+\begin{equation}
+E_{\rm scale}=\frac{GM_1M_2}{D_0},\qquad
+P_{\rm scale}=\Mtot v_{\rm c}.
+\label{eq:ch2-error-scales}
+\end{equation}
+保存した全時刻にわたる最大値を使い、
+\begin{align}
+e_E&=\max_n\frac{|E^n-E^0|}{E_{\rm scale}},&
+e_L&=\max_n\frac{|L_z^n-L_z^0|}{|L_z^0|},\nonumber\\
+e_P&=\max_n\frac{|\Pvec^n-\Pvec^0|}{P_{\rm scale}},&
+e_{\rm cm}&=\max_n\frac{|\Rvec_{\rm cm}^n-\Rvec_{\rm cm}^{\rm exact}(t_n)|}{D_0}
+\label{eq:ch2-error-metrics}
+\end{align}
+とします。$\Rvec_{\rm cm}^{\rm exact}$は式\eqref{eq:ch2-cm-motion}です。本章の初期条件では$L_z^0\ne0$なので、角運動量にだけその初期値を使えます。動径軌道など$L_z^0=0$の問題では、角運動量にも別の基準量が必要です。
+\inputcode{chap02/error-metrics}
+
+\begin{table}[htbp]
+\centering\small
+\caption{3ケースの保存量・重心の確認。いずれも$\Tc$まで1000ステップのKDKです。エネルギーは$|E(0)|$ではなく、式\eqref{eq:ch2-error-scales}で規格化しています。}
+\label{tab:ch2-conservation}
+\input{generated/chap02/conservation_table}
+\end{table}
+
+表\ref{tab:ch2-conservation}は、配布コードの実行結果です。表示された0は、この質量比と対称な初期配置をこの実装で計算したとき、対応する引き算が浮動小数点演算でも0になったことを意味します。任意の質量比・初期値で誤差が必ず0になる、という主張ではありません。後で重心を動かした場合も確認します。
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=0.76\linewidth]{\figpath{ch02_energy}}
+\caption{エネルギー差の時間変化。変化の向きも分かるよう、絶対値を取らない$[E(t)-E(0)]/E_{\rm scale}$を描いています。楕円で差が大きくなる時期は、近点付近に対応します。}
+\label{fig:ch2-energy}
+\end{figure}
+
+\subsection{保存量ごとに誤差が異なる理由を考える}
+KDKでは、同じ位置から求めた二つの力が打ち消し合うため、kickは全運動量を保ちます。driftは速度を変えません。全角運動量についても、kickでの全トルクが0で、driftの追加項は$\Vvec_k\times\Vvec_k=0$です。このため、本章の中心力の粒子対を正しく計算すれば、全運動量と全角運動量のずれは丸め誤差程度になります。
+
+一方、KDKは全エネルギーを毎ステップ厳密に保存する方法ではありません。図\ref{fig:ch2-energy}のように、有限の刻みによる差が現れます。全運動量と全角運動量がよく保存されていても、エネルギーや軌道の位相まで同じ精度で正しいとは限りません。
+
+\section{軌道の時間変化と刻みを確認する}
+\label{sec:ch2-accuracy}
+\subsection{近点と遠点を測る}
+式\eqref{eq:ch2-ellipse-parameters}と式\eqref{eq:ch2-ellipse-reference}によれば、$\eta=0.8$の標準例は$e=0.36$、$a_{\rm orb}=\chtwovalEllA\unit{kpc}$、$D_{\rm p}=\chtwovalEllRp\unit{kpc}$です。周期は$T_{\rm ell}=\chtwovalEllP\unit{Gyr}$で、基準の円軌道周期$\Tc$より短くなります。
+
+図\ref{fig:ch2-separation}の円軌道では、距離はほぼ一定です。楕円では近点と遠点の間を往復し、放物線では近点から遠ざかります。楕円は$\Tc$の間に1周以上するので、距離の谷が複数現れます。
+\begin{figure}[htbp]
+\centering\includegraphics[width=0.76\linewidth]{\figpath{ch02_separation}}
+\caption{2天体間距離の時間変化。横軸の$\Tc$は3ケース共通の基準時間で、楕円の周期ではありません。点線は楕円の場合の解析的な近点距離です。}
+\label{fig:ch2-separation}
+\end{figure}
+
+標準計算で保存された楕円の最小距離は$\chtwovalEllMin\unit{kpc}$でした。解析値との差には、時間積分の誤差に加えて、\textbf{真の近点通過時刻と保存時刻が一致しない}影響も含まれます。\texttt{np.argmin}で得るのは、保存された配列の最小要素です。連続時間の最小値そのものを解いているわけではありません。
+
+\subsection{保存量とは別に位置を比較する}
+円軌道には、第1章と同じ形の時刻に依存する解析解があります。
+\begin{equation}
+\Dvec_{\rm circ}^{\rm exact}(t)=D_0\left(\cos\Omega t,\sin\Omega t\right),\qquad
+\Omega=\sqrt{\frac{\mu}{D_0^3}}.
+\label{eq:ch2-exact-circle}
+\end{equation}
+同じ時刻における数値相対位置との差を取り、
+\begin{equation}
+e_{\rm circ}=\max_n\frac{|\Dvec^n-\Dvec_{\rm circ}^{\rm exact}(t_n)|}{D_0}
+\label{eq:ch2-circle-error}
+\end{equation}
+を測ります。半径の差ではなく位置ベクトルの差なので、位相のずれも検出します。
+\inputcode{chap02/exact-circle}
+
+楕円では任意時刻の位置を解く代わりに、\textbf{解析的に求めた周期}$T_{\rm ell}$を使います。ちょうど1周期後には初期位置へ戻るはずなので、
+\begin{equation}
+e_{\rm ret}=\frac{|\Dvec^{N_{\rm step}}-\Dvec(0)|}{D_0},\qquad
+ t_{N_{\rm step}}=T_{\rm ell}
+\label{eq:ch2-return-error}
+\end{equation}
+を確認します。これは1周期後の戻り位置の誤差であり、途中も含めた最大誤差ではありません。数値解が戻った時刻を探してから、そこを周期と呼ぶ方法ではない点が重要です。
+
+\subsection{同じ最終時刻で刻みを細かくする}
+円軌道は$\Tc$まで、楕円は$T_{\rm ell}$まで計算し、それぞれの系列の中でステップ数だけを変えます。二つの系列の最終時刻は異なりますが、同じ系列では固定されています。二つの誤差の定義も異なるため、値の大小をそのまま「円と楕円の難しさ」の尺度にはしません。
+\inputcode{chap02/convergence}
+
+\begin{table}[htbp]
+\centering\small
+\caption{KDKの時間刻み試験。円は解析的な1周期までの最大位置誤差、楕円は解析的な1周期後の戻り位置の誤差を示します。$p$は一つ前の行との誤差比から求めた推定次数です。}
+\label{tab:ch2-convergence}
+\input{generated/chap02/convergence_table}
+\end{table}
+
+刻みを半分にしたときの誤差比から、
+\begin{equation}
+p=\frac{\log[e(\Delta t)/e(\Delta t/2)]}{\log 2}
+\label{eq:ch2-order}
+\end{equation}
+を求めます。表\ref{tab:ch2-convergence}の最も細かい刻み側では、円が$\chtwovalOrderC$、楕円が$\chtwovalOrderEll$で、2へ近づいています。第1章の1粒子の場合から2体へ変えても、KDKの2次精度を確認できます。
+\begin{figure}[htbp]
+\centering\includegraphics[width=0.76\linewidth]{\figpath{ch02_convergence}}
+\caption{時間刻みと位置誤差の両対数表示。横軸は各系列の積分区間に対する刻みの比で、どちらも$1/N_{\rm step}$です。点線は円の最も細かい刻みの点を通る傾き2の参照線です。数値データへの当てはめではありません。}
+\label{fig:ch2-convergence}
+\end{figure}
+
+近点付近では距離が小さくなり、速度と加速度が大きく変わります。同じ刻みでも、円軌道より厳しい条件になることがあります。離心率をさらに大きくするときや、近点距離を小さくするときには、その新しい条件で刻み試験を行います。標準条件で得た誤差を、そのまま別の軌道の誤差とはみなしません。
+
+\begin{notebox}{近点通過時刻の決め方}
+保存された距離の最小値を使う以外に、距離を時間の関数として補間したり、動径速度$\Dvec\cdot\Uvec/D$が0になる時刻を探したりする方法もあります。本章では新しい補間法・求根法を追加せず、最小値が保存時刻に依存することを明示します。補間と求根の基本は、第3・4章で別の具体例から学びます。
+\end{notebox}
+
+\clearpage
+\section{近点距離を指定して接近させる}
+\label{sec:ch2-encounter}
+\subsection{遠くから内向きに始める}
+これまでの放物線は、動径速度0の近点から始めました。銀河相互作用の準備では、離れた位置から互いに近づく初期条件が便利です。ここでは初期距離$D_0$と目標近点距離$D_{\rm p}$を指定し、$0<D_{\rm p}<D_0$とします。
+
+放物線では$\varepsilon=0$です。近点では速度は接線方向だけなので、式\eqref{eq:ch2-specific-integrals}から
+\begin{equation}
+U_{\rm p}^2=\frac{2\mu}{D_{\rm p}},\qquad
+\ell_z=D_{\rm p}U_{\rm p}=\sqrt{2\mu D_{\rm p}}
+\label{eq:ch2-pericenter-angular}
+\end{equation}
+です。角運動量保存より、初期距離での接線速度は$U_t=\ell_z/D_0$です。初期位置でもエネルギー0とし、内向きの符号を選ぶと、
+\begin{equation}
+U_t=\frac{\sqrt{2\mu D_{\rm p}}}{D_0},\qquad
+U_r=-\sqrt{\frac{2\mu}{D_0}-U_t^2}
+\label{eq:ch2-incoming-velocity}
+\end{equation}
+になります。初期位置を$\Dvec=(D_0,0)$とすれば、$\Uvec=(U_r,U_t)$をそのまま渡せます。ここでも原点を重心にした各天体の初期値へ、式\eqref{eq:ch2-inverse-transform}で変換します。
+\inputcode{chap02/parabolic-encounter}
+
+\subsection{指定した近点の再現性を確かめる}
+この追加実験では、質量は標準例のまま、$D_0=60\unit{kpc}$、$D_{\rm p}=8\unit{kpc}$、最終時刻$0.60\unit{Gyr}$、1200ステップとします。刻みは$0.5\unit{Myr}$です。3ケース比較の$D_0$や$\Tc$と混同しないよう、条件を分けて記録します。
+
+得られる初期相対速度は、$U_r=\chtwovalEncVr\unit{km\,s^{-1}}$、$U_t=\chtwovalEncVt\unit{km\,s^{-1}}$です。内向きの動径速度が負であることを確認してください。計算後に保存された最小距離は$\chtwovalEncMin\unit{kpc}$、その保存時刻は$\chtwovalEncTime\unit{Gyr}$でした。指定した$8\unit{kpc}$へ近づき、その後は離れていきます。
+\begin{figure}[htbp]
+\centering\includegraphics[width=0.76\linewidth]{\figpath{ch02_incoming_encounter}}
+\caption{点質量2体の内向きに始まる放物線遭遇。破線は指定した近点距離、四角は保存された距離の最小値です。これは本章の質量比$2:1$の計算であり、後の等質量Plummer銀河の標準実験とは別の条件です。}
+\label{fig:ch2-encounter}
+\end{figure}
+
+近づいた後に離れていくことは、計算の失敗ではありません。摩擦のない点質量2体では相対エネルギーが保存されるため、放物線遭遇が自動的に束縛軌道へ変わることはありません。近接通過と合体は区別します。
+
+本章の式\eqref{eq:ch2-incoming-velocity}は、ポテンシャルが$-\mu/D$の場合の式です。第5章で有限サイズを表す中心間重力へ替えたとき、$\mu$だけを同じにしてこの速度を使えば、同じ近点距離が得られるとは限りません。\textbf{重力のモデルを変更したら、そのモデルに対応するエネルギーと初期条件を使う}という原則を引き継ぎます。
+
+\section{条件を一つずつ変えて確かめる}
+\label{sec:ch2-experiments}
+\subsection{重心を等速で動かす}
+計算の原点や、系全体の等速運動を変えても、相対運動は変わらないはずです。式\eqref{eq:ch2-inverse-transform}の重心位置を$(5,-3)\unit{kpc}$、重心速度を$(30,-20)\unit{km\,s^{-1}}$として、同じ楕円を計算します。
+\inputcode{chap02/boost-experiment}
+相対軌道の差を$D_0$で割った最大値は$\chtwovalBoostRel$、重心が式\eqref{eq:ch2-cm-motion}の直線から外れる量は$D_0$単位で$\chtwovalBoostCm$でした。これらは本実装での丸め誤差程度の差です。重心系の計算でたまたま誤差が0になった場合だけでなく、移動する重心でも確認する意味があります。
+
+このとき、任意の原点の周りの$E$や$L_z$の初期値は、重心系と同じとは限りません。比較すべきなのは、それぞれの系で保存する量と、式\eqref{eq:ch2-energy-decomposition}・式\eqref{eq:ch2-angular-decomposition}の関係です。
+
+\subsection{全質量を固定して質量比を変える}
+次は$\Mtot,D_0,\Uvec(0)$を固定し、$q=M_2/M_1$だけを変えます。相対運動の式に現れるのは$\mu=G\Mtot$なので、相対軌道は同じです。しかし、各天体が重心から離れる距離は変わります。
+\begin{table}[htbp]
+\centering\small
+\caption{全質量を固定した質量比の比較。相対軌道の差は、標準の$q=0.5$との差の最大値です。初期相対速度は$0.8v_{\rm c}$に固定しています。}
+\label{tab:ch2-mass-ratio}
+\input{generated/chap02/mass_ratio_table}
+\end{table}
+
+$M_1$を固定したまま$M_2$を変えると、$\Mtot$も変わるので別の実験です。パラメータを変えたときには、何を固定し、何が連動して変わるかを記録します。これは銀河相互作用の比較実験にも必要な習慣です。
+
+\section{本章のまとめ}
+\label{sec:ch2-summary}
+本章では、互いに重力を及ぼす2天体をKDKで動かしました。第1章から積分法を作り直すのではなく、2天体の同じ時刻の位置から加速度を返す関数へ替えました。最後に評価した加速度を再利用し、両天体の位置と速度を整数時刻にそろえて保存しました。
+
+重心は全質量による重み付き平均です。相対運動には$\mu=G(M_1+M_2)$が入り、各天体の軌道は重心運動と相対運動から作られます。初期接線速度を変えると、円・楕円・放物線を作れることも確認しました。
+
+保存量は、今回は2体系の全エネルギー・全角運動量・全運動量です。放物線のように初期エネルギーが0の問題では、その値で誤差を割りません。保存量だけでなく、円の同時刻の位置、楕円の1周期後の戻り位置、刻みを変えた収束も確かめました。
+
+最後に、初期距離と近点距離から内向きの接近軌道を作りました。ただし、本章の重力源はまだ点質量です。第3章では、質量に広がりをもつ球対称のPlummerモデルを導入し、その中の星の運動へ進みます。点質量の式と広がった銀河の式を、混同しないことが重要です。
+
+\chapterexercises
+\paragraph{演習2.1　確認：重心と作用・反作用}
+$M_1=10^{11}\Msun$、$M_2=5\times10^{10}\Msun$、$D_0=20\unit{kpc}$の円軌道を重心系に置いてください。初期位置と各天体の速度を求め、全運動量が0になることを示してください。また、初期加速度の大きさの比と、力の大きさの比を求めてください。
+
+\paragraph{演習2.2　確認：楕円の形と周期}
+同じ$D_0$で$\eta=0.8$としたとき、初期位置が遠点である理由を説明してください。$e,a_{\rm orb},D_{\rm p},T_{\rm ell}$を初期条件から求め、数値計算の距離の時間変化と比較してください。保存された最小距離と解析的な近点距離が完全には一致しない理由も述べてください。
+
+\paragraph{演習2.3　確認：放物線のエネルギー誤差}
+$\eta=\sqrt{2}$の計算で、$|E(t)-E(0)|/|E(0)|$を誤差に使わない理由を説明してください。本章の$E_{\rm scale}$で規格化すると、どの物理的な大きさに対するずれを測ることになるでしょうか。
+
+\paragraph{演習2.4　応用：全質量を固定する}
+表\ref{tab:ch2-mass-ratio}と同じ条件で$q=1,0.5,0.1$を比較してください。各天体の重心からの距離が変わっても、相対軌道が同じになることを確認してください。$M_1$だけを固定して$q$を変えた場合と、何が異なるか説明してください。
+
+\paragraph{演習2.5　応用：移動する重心}
+重心に位置$(5,-3)\unit{kpc}$、速度$(30,-20)\unit{km\,s^{-1}}$を与えてください。重心が等速直線運動し、相対軌道がもとの楕円と同じになるか確かめてください。任意の慣性系での全エネルギー$E$の符号だけでは、束縛軌道かどうかを判断できない理由も説明してください。
+
+\paragraph{演習2.6　応用：KDKの時間反転}
+標準の楕円を$\Tc$まで計算し、その最終位置を保ったまま、\textbf{両天体の速度}を符号反転してください。同じ正の時間刻みでさらに$\Tc$だけ進めたとき、初期位置と初期速度の符号反転へ戻るか確認してください。時間反転の試験に通ることだけで、軌道の位相誤差が小さいと言えるでしょうか。
+
+\paragraph{演習2.7　発展：脱出速度を超える軌道}
+$\eta=1.6$として、ほかは3ケース比較と同じ条件で計算してください。相対エネルギーの符号と離心率を求め、軌道が双曲線になることを確認してください。$\Tc$後の距離を放物線の場合と比べ、全エネルギーの誤差も確認してください。積分器の変更は必要ありません。

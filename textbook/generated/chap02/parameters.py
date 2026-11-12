@@ -1,0 +1,13 @@
+KM_S_TO_KPC_GYR = 1.0227121650537077
+G = 4.30091e-6 * KM_S_TO_KPC_GYR**2  # kpc^3 / (Msun Gyr^2)
+masses = np.array([1.0e11, 5.0e10])  # M1, M2 [Msun]
+d0 = 20.0                            # 2天体の初期距離 [kpc]
+mtot = np.sum(masses)
+mu = G * mtot
+m_red = masses[0] * masses[1] / mtot
+v_c = np.sqrt(mu / d0)               # 相対運動の円運動速度 [kpc/Gyr]
+t_c = 2.0 * np.pi * np.sqrt(d0**3 / mu)
+n_steps = 1000
+t_end = t_c
+dt = t_end / n_steps
+eta_values = {"Circular": 1.0, "Elliptic": 0.8, "Parabolic": np.sqrt(2.0)}

@@ -1,0 +1,131 @@
+{
+  "chapters": [
+    {
+      "chapter": 0,
+      "code_cells": 1,
+      "execution_seconds": 7.723185056000148,
+      "master_sha256": "f57982c79b7c662d9068abf486a997238fcd0431eb495de7a82df0ab49cb401f",
+      "independent_tests": 3,
+      "execution_environment": {
+        "python": "3.13.5",
+        "numpy": "2.3.5",
+        "matplotlib": "3.10.8",
+        "system": "Linux-6.18.44-x86_64-with-glibc2.41",
+        "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+      }
+    },
+    {
+      "chapter": 1,
+      "code_cells": 22,
+      "execution_seconds": 21.43112333900001,
+      "master_sha256": "52d966729f71fb86d645de5710b41c1d3fbc0d71b531730907e829f5fd8712d5",
+      "independent_tests": 14,
+      "execution_environment": {
+        "python": "3.13.5",
+        "numpy": "2.3.5",
+        "matplotlib": "3.10.8",
+        "system": "Linux-6.18.44-x86_64-with-glibc2.41",
+        "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+      }
+    },
+    {
+      "chapter": 2,
+      "code_cells": 18,
+      "execution_seconds": 19.565202879000026,
+      "master_sha256": "e907d37670f92834e6d7296b664311ae4651140d83df4625c294927444c6ba2e",
+      "independent_tests": 30,
+      "execution_environment": {
+        "python": "3.13.5",
+        "numpy": "2.3.5",
+        "matplotlib": "3.10.8",
+        "system": "Linux-6.18.44-x86_64-with-glibc2.41",
+        "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+      }
+    },
+    {
+      "chapter": 3,
+      "code_cells": 17,
+      "execution_seconds": 24.957422664999967,
+      "master_sha256": "c2204c2121f0ee956ce94fb435b8a0bd2444a3a672e3bd7bd07d0fa2dbd190d1",
+      "independent_tests": 53,
+      "execution_environment": {
+        "python": "3.13.5",
+        "numpy": "2.3.5",
+        "matplotlib": "3.10.8",
+        "system": "Linux-6.18.44-x86_64-with-glibc2.41",
+        "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+      }
+    },
+    {
+      "chapter": 4,
+      "code_cells": 14,
+      "execution_seconds": 19.021846765000078,
+      "master_sha256": "ccd1bc009d5f6c94be42b686383430f5d047cc57ef97b25fb98410cc3930860f",
+      "independent_tests": 79,
+      "execution_environment": {
+        "python": "3.13.5",
+        "numpy": "2.3.5",
+        "matplotlib": "3.10.8",
+        "system": "Linux-6.18.44-x86_64-with-glibc2.41",
+        "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+      }
+    },
+    {
+      "chapter": 5,
+      "code_cells": 15,
+      "execution_seconds": 51.239163534,
+      "master_sha256": "19adaae10acbd6169ec8762995cba49b239bd62299609bd29f0cc0c2097c2ee0",
+      "independent_tests": 93,
+      "execution_environment": {
+        "python": "3.13.5",
+        "numpy": "2.3.5",
+        "matplotlib": "3.10.8",
+        "system": "Linux-6.18.44-x86_64-with-glibc2.41",
+        "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+      }
+    },
+    {
+      "chapter": 6,
+      "code_cells": 13,
+      "execution_seconds": 86.79249887000003,
+      "master_sha256": "7de078a5a3aea7600d97319988934f4c369356302dd6d0b235e77703c4113482",
+      "independent_tests": 29,
+      "execution_environment": {
+        "python": "3.13.5",
+        "numpy": "2.3.5",
+        "matplotlib": "3.10.8",
+        "system": "Linux-6.18.44-x86_64-with-glibc2.41",
+        "cpu": "x86_64"
+      },
+      "execution_reused_from_v2_2_split": true
+    },
+    {
+      "chapter": 7,
+      "code_cells": 7,
+      "independent_tests": 42,
+      "master_sha256": "bdb252cdf1d0c0b34554f977db490f72876b495764b3c00ba943346874ce0f5f",
+      "execution_environment": {
+        "python": "3.13.5",
+        "numpy": "2.3.5",
+        "matplotlib": "3.10.8",
+        "system": "Linux-6.18.44-x86_64-with-glibc2.41",
+        "cpu": "x86_64"
+      },
+      "execution_reused_from_v2_2_split": false
+    }
+  ],
+  "environment": {
+    "python": "3.13.5",
+    "numpy": "2.3.5",
+    "matplotlib": "3.10.8",
+    "system": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+  },
+  "last_build_environment": {
+    "python": "3.13.5",
+    "numpy": "2.3.5",
+    "matplotlib": "3.10.8",
+    "system": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C"
+  }
+}

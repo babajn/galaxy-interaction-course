@@ -1,0 +1,34 @@
+% Geometry and two dimensionless density functions, not a simulated snapshot.
+\begin{tikzpicture}[textbook diagram]
+  \node[anchor=west,font=\sffamily\bfseries] at (0,4.9) {Area matters when sampling a radius};
+  \coordinate (O) at (2.4,2.45);
+  \draw[guide] (O) circle (2.0);
+  \path[fill=figblue!12,even odd rule] (O) circle (1.38) (O) circle (1.16);
+  \draw[figblue] (O) circle (1.16);
+  \draw[figblue] (O) circle (1.38);
+  \fill (O) circle (1.3pt);
+  \draw[vector] (O) -- ($(O)+(30:1.16)$) node[midway,above left] {$R$};
+  \draw[guide] ($(O)+(135:1.16)$) -- (0.55,3.72);
+  \draw[guide] ($(O)+(135:1.38)$) -- (0.35,3.92);
+  \node[anchor=east] at (0.48,3.93) {$dR$};
+  \node[anchor=west] at (3.4,4.10) {$R_{\max}$};
+  \node at (2.4,-0.15) {$dA=2\pi R\,dR$};
+  \node[small label,text=figgray] at (2.4,-0.67) {Ring thickness exaggerated};
+  \begin{scope}[shift={(6.0,0.65)},x=1cm,y=3.05cm]
+    \draw[vector] (0,0) -- (5.15,0) node[right] {$R/R_d$};
+    \draw[vector] (0,0) -- (0,1.15);
+    \node[rotate=90,small label] at (-0.88,0.56) {Dimensionless density};
+    \foreach \x in {0,1,2,3,4,5} {\draw (\x,0) -- (\x,-0.027); \node[below,small label] at (\x,-0.027) {\x};}
+    \foreach \yy in {0.5,1.0} {\draw (0,\yy) -- (-0.065,\yy); \node[left,small label] at (-0.065,\yy) {\yy};}
+    \draw[figblue,line width=0.95pt,domain=0:5,samples=81] plot (\x,{exp(-\x)});
+    \draw[figred,line width=0.95pt,dashed,domain=0:5,samples=81] plot (\x,{\x*exp(-\x)/(1-6*exp(-5))});
+    \fill[figblue] (0,1) circle [radius=1.6pt];
+    \draw[figred,fill=white] (1,{exp(-1)/(1-6*exp(-5))}) circle [radius=2pt];
+  \end{scope}
+  \draw[figblue,line width=0.95pt] (6.10,-0.35) -- (6.75,-0.35);
+  \node[anchor=west] at (6.85,-0.35) {$\Sigma_N/\Sigma_{N,0}=e^{-R/R_d}$};
+  \draw[figred,line width=0.95pt,dashed] (6.10,-1.00) -- (6.75,-1.00);
+  \node[anchor=west] at (6.85,-1.00) {$R_d\,p_R(R)$};
+  \node[small label,anchor=west,text=figgray] at (6.85,-1.50) {$R_{\max}=5R_d$; normalized on this range};
+  \node[draw=black!30,fill=white,align=center,text width=106mm,inner sep=5pt] at (5.75,-2.45) {$dN=\Sigma_N(R)\,dA=2\pi R\,\Sigma_N(R)\,dR$};
+\end{tikzpicture}

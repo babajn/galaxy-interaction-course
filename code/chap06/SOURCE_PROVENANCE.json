@@ -1,0 +1,5 @@
+{
+  "source": "Chap05_galaxy_simulation_v1.zip / galaxy_chap05_v1/chap05_master.py",
+  "sha256": "99eb1aa593c62f55f5fcc1eaaae1e1ca47a4c75943b0ce9a08f53f8c1e093d0c",
+  "policy": "Functions are copied from Chapter 5, with only solution markers removed. New experiment wrappers and the optional friction model are defined in Chapter 6."
+}

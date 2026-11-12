@@ -1,0 +1,220 @@
+{
+  "chapter": 3,
+  "version": "1.0",
+  "passed": 53,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "trapezoid: constant on nonuniform grid",
+      "passed": true
+    },
+    {
+      "name": "trapezoid: linear function on nonuniform grid",
+      "passed": true
+    },
+    {
+      "name": "trapezoid: cumulative integral begins at grid origin",
+      "passed": true
+    },
+    {
+      "name": "trapezoid: quadratic error ratio four",
+      "passed": true
+    },
+    {
+      "name": "grid: duplicate nodes rejected",
+      "passed": true
+    },
+    {
+      "name": "grid: decreasing nodes rejected",
+      "passed": true
+    },
+    {
+      "name": "grid: shape mismatch rejected",
+      "passed": true
+    },
+    {
+      "name": "grid: nonfinite values rejected",
+      "passed": true
+    },
+    {
+      "name": "quadrature: negative radius rejected",
+      "passed": true
+    },
+    {
+      "name": "quadrature: zero interval count rejected",
+      "passed": true
+    },
+    {
+      "name": "quadrature: bool interval count rejected",
+      "passed": true
+    },
+    {
+      "name": "quadrature: zero radius returns zero",
+      "passed": true
+    },
+    {
+      "name": "Plummer: finite density at origin",
+      "passed": true
+    },
+    {
+      "name": "Plummer: finite central potential",
+      "passed": true
+    },
+    {
+      "name": "Plummer: zero central force",
+      "passed": true
+    },
+    {
+      "name": "Plummer: mass at scale radius",
+      "passed": true
+    },
+    {
+      "name": "Plummer: enclosed mass tends to total",
+      "passed": true
+    },
+    {
+      "name": "Plummer: force from enclosed mass",
+      "passed": true
+    },
+    {
+      "name": "Plummer: force equals minus potential gradient",
+      "passed": true
+    },
+    {
+      "name": "Plummer: mass derivative matches shell density",
+      "passed": true
+    },
+    {
+      "name": "Plummer: circular acceleration",
+      "passed": true
+    },
+    {
+      "name": "Plummer: odd force under reflection",
+      "passed": true
+    },
+    {
+      "name": "bisection: known root lies in reported bracket",
+      "passed": true
+    },
+    {
+      "name": "bisection: actual error within half-width",
+      "passed": true
+    },
+    {
+      "name": "bisection: bracket shrinks by two",
+      "passed": true
+    },
+    {
+      "name": "bisection: residual sign straddles zero",
+      "passed": true
+    },
+    {
+      "name": "bisection: decreasing function works",
+      "passed": true
+    },
+    {
+      "name": "bisection: exact lower endpoint",
+      "passed": true
+    },
+    {
+      "name": "bisection: exact upper endpoint",
+      "passed": true
+    },
+    {
+      "name": "bisection: missing sign bracket rejected",
+      "passed": true
+    },
+    {
+      "name": "bisection: reversed interval rejected",
+      "passed": true
+    },
+    {
+      "name": "bisection: invalid tolerance rejected",
+      "passed": true
+    },
+    {
+      "name": "bisection: nonfinite endpoint rejected",
+      "passed": true
+    },
+    {
+      "name": "bisection: iteration limit raises",
+      "passed": true
+    },
+    {
+      "name": "half-mass: analytic function root",
+      "passed": true
+    },
+    {
+      "name": "half-mass: quadrature refinement improves actual radius",
+      "passed": true
+    },
+    {
+      "name": "half-mass: quadrature-limited error ratio four",
+      "passed": true
+    },
+    {
+      "name": "half-mass: tiny bracket does not bound quadrature error",
+      "passed": true
+    },
+    {
+      "name": "KDK: initial state unchanged",
+      "passed": true
+    },
+    {
+      "name": "KDK: force evaluations equal Nstep+1",
+      "passed": true
+    },
+    {
+      "name": "KDK: history shape and final time",
+      "passed": true
+    },
+    {
+      "name": "KDK: single-step inverse",
+      "passed": true
+    },
+    {
+      "name": "KDK: cached acceleration matches new position",
+      "passed": true
+    },
+    {
+      "name": "KDK: circular energy deviation small",
+      "passed": true
+    },
+    {
+      "name": "KDK: central angular momentum conserved",
+      "passed": true
+    },
+    {
+      "name": "KDK: circular position second-order convergence",
+      "passed": true
+    },
+    {
+      "name": "KDK: full time reversal",
+      "passed": true
+    },
+    {
+      "name": "KDK: constant acceleration exact",
+      "passed": true
+    },
+    {
+      "name": "KDK: Plummer origin valid and stationary",
+      "passed": true
+    },
+    {
+      "name": "model: zero scale rejected",
+      "passed": true
+    },
+    {
+      "name": "integration: invalid state shape rejected",
+      "passed": true
+    },
+    {
+      "name": "integration: zero duration rejected",
+      "passed": true
+    },
+    {
+      "name": "integration: nonfinite initial state rejected",
+      "passed": true
+    }
+  ]
+}
