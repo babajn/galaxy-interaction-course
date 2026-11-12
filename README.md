@@ -17,7 +17,7 @@ jupyter lab
 ```
 
 bash/zshなら有効化は `source .venv/bin/activate` です。授業で指定する環境があればそちらを使います。
-`notebook/complete/chap00_complete.ipynb` で環境確認を行ってから第1章へ進みます。第0章には演習用TODOはありません。第1--7章では完成版は出力付き、学生版はTODO付きです。公開URLは刊行時に確定します。現段階では授業・ゼミで案内された配布物を使ってください。
+`notebook/complete/chap00_complete.ipynb` で環境確認を行ってから第1章へ進みます。第0章には演習用TODOはありません。第1--7章では完成版は出力付き、学生版はTODO付きです。公開版はこのリポジトリから取得できます。
 
 ### フォルダ
 
@@ -57,6 +57,8 @@ Notebookだけを手で変更しても、再生成時はmasterが優先されま
 
 ### PDFとOverleaf
 
+[配布版PDF（171ページ）](textbook/ms.pdf) を開けます。このPDFは既存の配布版を維持しており、今回の修正後の再組版はしていません。
+
 本文は157×221 mmです。ローカルでは `cd textbook` の後、XeLaTeXで `main.tex` を3回実行します。tcsh用 `build.tcsh` もあります。TeXにはNoto CJKフォントとTikZ・xeCJKなどが必要です。フォントファイルは同梱していません。
 
 Overleafには別配布のOverleaf用ZIPを「新規プロジェクト」として読み込み、**XeLaTeX / main.tex** を選ぶ方法を推奨します。このZIPは本文に必要なものをルートへ配置しています。全コード一式のフォルダと混ぜないでください。本文だけを古いプロジェクトへ追加すると新しいマクロが欠けるので、preamble・chapters・generated・figures・commandsを一組で更新します。実際のOverleafサーバーでの組版ではなく、ローカルXeLaTeXで検証した配布物です。
@@ -80,5 +82,7 @@ python3 code/test_build_tools.py
 数値の再検証には `python code/rebuild.py --execute --test` を実行してください。
 GitHub Actionsにも同じ検査を設定しています。PDFの再組版・レイアウト確認は別途必要です。
 
-公開先の予定名は `babajn/galaxy-interaction-course` です。リポジトリの作成・公開はまだ完了していません。
+公開先：https://github.com/babajn/galaxy-interaction-course
+
+2026年11月12日のGitHub Actionsで、全107コードセルの実行と343項目の独立数値検査が合格しました。最新の全検査の状態と実行ログは [Actions](https://github.com/babajn/galaxy-interaction-course/actions) を参照してください。
 利用ライセンスは未指定です。再配布・改変の条件は、著者がライセンスを指定するまで確定していません。

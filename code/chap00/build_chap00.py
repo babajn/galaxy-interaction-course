@@ -98,8 +98,8 @@ def main():
     else:
         complete = preserve_outputs(complete, ROOT / "chap00_complete.ipynb")
         student = preserve_outputs(student, ROOT / "chap00_student.ipynb")
-    nbformat.write(complete, ROOT / "chap00_complete.ipynb")
-    nbformat.write(student, ROOT / "chap00_student.ipynb")
+    nbformat.write(nbformat.from_dict(complete), ROOT / "chap00_complete.ipynb")
+    nbformat.write(nbformat.from_dict(student), ROOT / "chap00_student.ipynb")
     generate_values(complete)
     if args.pdf:
         subprocess.run([sys.executable, str(ROOT.parent / "rebuild.py"), "--pdf"], check=True)

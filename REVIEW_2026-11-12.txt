@@ -26,8 +26,12 @@
 保存済み記録について
 配布元のvalidation/execution_report.jsonには107コードセルと343独立検査の記録がある。実行時のmasterハッシュと現在の計算正本の一致は確認した。ただし、これは今回ローカル環境で343検査を再実行した証拠ではない。
 
+GitHubで新たに実施した数値検証
+2026-11-12、GitHub Actions run 43200264260で全107コードセルの実行と343独立数値検査が合格した。環境：Python 3.12.16、NumPy 2.5.4、Matplotlib 3.11.2、Ubuntu。全章再生成後の同期1218項目も合格した。その後の第0章非実行再生成でNotebook出力の型変換漏れを検出し、nbformat.from_dictによる変換を追加した。最新の全体結果はActionsを参照。
+https://github.com/babajn/galaxy-interaction-course/actions
+
 未完了の検証
-ローカルでの数値再実行とPDF再組版は未完了。今回の接続環境ではNumPy等を備えたPythonを起動できず、XeLaTeXもCPU形式の問題で起動できなかった。新しいGitHub Actionsの実行結果はGitHub上で確認すること。既存PDFは170ページの配布元PDFを維持しており、今回の再組版・全ページ目視検証済みではない。
+ローカルでの数値再実行とPDF再組版は未完了。今回の接続環境ではNumPy等を備えたPythonを起動できず、XeLaTeXもCPU形式の問題で起動できなかった。数値再実行は上記のGitHub上で実施した。既存PDF（textbook/ms.pdf）はPDFKitで171ページと確認した。配布元PDFを維持しており、今回の再組版・全ページ目視検証済みではない。
 
 数値再実行のコマンド
 python code/rebuild.py --execute --test
