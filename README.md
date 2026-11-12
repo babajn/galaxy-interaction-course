@@ -6,7 +6,7 @@ Pythonの基礎と、Newtonの運動方程式・中心力・保存則・2体問�
 
 - [PDFテキスト](textbook.pdf)
 - [完成版Notebook（第0–7章）](notebook/complete)：説明・コード・実行結果付き
-- [学生版Notebook（第0–7章）](notebook/student)：第1–7章は演習用TODO付き
+- [実習版Notebook（第0–7章）](notebook/student)：第1–7章は演習用TODO付き
 
 **教材作成：馬場淳一（鹿児島大学/国立天文台）**
 
@@ -29,33 +29,32 @@ jupyter lab
 
 bash/zshの場合は、有効化の行を `source .venv/bin/activate` に置き換えます。Windows PowerShellでは、`python -m venv .venv` で作成し、`.venv\Scripts\Activate.ps1` で有効にします。以降のパッケージ導入・起動手順は共通です。
 
-まず [第0章の環境確認](notebook/complete/chap00_complete.ipynb) を開きます。その後、第1章から順に進めてください。完成版は、カーネルを再起動して上から順に実行できます。学生版の第1–7章は本文のTODOを実装してから実行します。任意演習は標準計算・結果の保存・アニメーションの後にあります。本体のTODOを解答済みなら、「すべて実行」が未解答の任意演習で停止しても、標準結果は保存済みです。任意演習を省略するときはセル全体を飛ばしてください。標準結果は `data/validation.json`、実行した任意演習の結果は `data/exercise_validation.json` に分けて保存します。設定セルを実行すると演習結果を初期化します。第4章には任意演習のコードセルがなく、状態は `not_applicable` です。パラメータを変えた場合はカーネルを再起動してから実行し直してください。
+> 旧PDF（v2.5）の §0.1–0.2 にある `code/requirements.txt` は、公開版では直下の `requirements.txt` に読み替えてください。
+
+まず [第0章の環境確認](notebook/complete/chap00_complete.ipynb) を開き、その後は第1章から順に進めてください。
+
+- **完成版**：説明・コード・実行結果を確認するNotebookです。カーネルを再起動して、上から順に実行できます。
+- **実習版**：本文を参照しながらTODOを埋めるNotebookです。第0章にはTODOがなく、第1〜7章で実装に取り組みます。
+
+任意演習は、標準計算と結果の保存の後にあります。取り組まない場合は、該当するセル全体を飛ばしてください。本体のTODOを解答済みなら、「すべて実行」が未解答の任意演習で停止しても、標準結果は保存されています。
+
+パラメータを変更して計算し直すときは、カーネルを再起動し、設定セルから順に実行してください。
 
 各章のNotebookは単独で動作し、別のPythonファイルや入力データは不要です。図・CSVなどは、作業フォルダ内の `output/chapXX/` に保存します。完成版の図や動画は保存済みですが、GitHubのプレビューでは動画が表示されないことがあります。その場合はJupyterで開いてください。
 
 ## 内容
 
-| 章 | 内容 | 完成版 | 学生版 |
+| 章 | 内容 | 完成版 | 実習版 |
 |---|---|---|---|
-| 0 | 計算環境を準備する | [完成版](notebook/complete/chap00_complete.ipynb) | [学生版](notebook/student/chap00_student.ipynb) |
-| 1 | Pythonで天体の運動を計算する | [完成版](notebook/complete/chap01_complete.ipynb) | [学生版](notebook/student/chap01_student.ipynb) |
-| 2 | 2体問題を計算する | [完成版](notebook/complete/chap02_complete.ipynb) | [学生版](notebook/student/chap02_student.ipynb) |
-| 3 | 銀河の中で星を動かす | [完成版](notebook/complete/chap03_complete.ipynb) | [学生版](notebook/student/chap03_student.ipynb) |
-| 4 | テスト粒子で円盤銀河を作る | [完成版](notebook/complete/chap04_complete.ipynb) | [学生版](notebook/student/chap04_student.ipynb) |
-| 5 | 2つの銀河を接近させる | [完成版](notebook/complete/chap05_complete.ipynb) | [学生版](notebook/student/chap05_student.ipynb) |
-| 6 | 銀河相互作用を調べる | [完成版](notebook/complete/chap06_complete.ipynb) | [学生版](notebook/student/chap06_student.ipynb) |
-| 7 | 動力学的摩擦で軌道減衰を調べる | [完成版](notebook/complete/chap07_complete.ipynb) | [学生版](notebook/student/chap07_student.ipynb) |
+| 0 | 計算環境を準備する | [完成版](notebook/complete/chap00_complete.ipynb) | [実習版](notebook/student/chap00_student.ipynb) |
+| 1 | Pythonで天体の運動を計算する | [完成版](notebook/complete/chap01_complete.ipynb) | [実習版](notebook/student/chap01_student.ipynb) |
+| 2 | 2体問題を計算する | [完成版](notebook/complete/chap02_complete.ipynb) | [実習版](notebook/student/chap02_student.ipynb) |
+| 3 | 銀河の中で星を動かす | [完成版](notebook/complete/chap03_complete.ipynb) | [実習版](notebook/student/chap03_student.ipynb) |
+| 4 | テスト粒子で円盤銀河を作る | [完成版](notebook/complete/chap04_complete.ipynb) | [実習版](notebook/student/chap04_student.ipynb) |
+| 5 | 2つの銀河を接近させる | [完成版](notebook/complete/chap05_complete.ipynb) | [実習版](notebook/student/chap05_student.ipynb) |
+| 6 | 銀河相互作用を調べる | [完成版](notebook/complete/chap06_complete.ipynb) | [実習版](notebook/student/chap06_student.ipynb) |
+| 7 | 動力学的摩擦で軌道減衰を調べる | [完成版](notebook/complete/chap07_complete.ipynb) | [実習版](notebook/student/chap07_student.ipynb) |
 
-## 配布版について
-
-このリポジトリには公開用のPDF・Notebookと、実行案内・依存パッケージ一覧・自動検査設定を置いています。TeX原稿、生成スクリプト、編集メモ、検証用の内部資料は著者の教材一式で別管理しています。
-
-公開改訂版 v2.7 では、任意演習より前に標準結果を保存する構成とし、第5章の演習結果も別ファイルへ分離しました。演習番号と引用の配置を修正し、PDFとREADMEの題名を統一しました。物理モデルと標準の数値条件は維持しています。
-
-文書改訂版 v2.7.1 では、READMEとPDFの冒頭に「制限三体近似」の意味を追記しました。Notebookのコードと実行結果はv2.7と同じです。
-
-旧PDF（v2.5）の §0.1–0.2 にある `code/requirements.txt` は、公開版では直下の `requirements.txt` に読み替えてください。
-
-完成版全8冊と、本文のTODOを解答で補い任意演習を省略した学生版全8冊を、教材一式のない環境で実行する自動検査を設定しています。「すべて実行」が最初の未解答の任意演習で停止した時点でも標準結果が保存済みであることを検査します。改訂前の数値との照合、図・警告・演習結果の初期化も検査します。照合基準は自動検査設定内で管理しており、過去のGit履歴は不要です。[最新の検査結果](https://github.com/babajn/galaxy-interaction-course/actions)を参照してください。
+## 利用条件
 
 利用ライセンスは未指定です。
