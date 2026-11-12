@@ -35,16 +35,16 @@ bash/zshの場合は、有効化の行を `source .venv/bin/activate` に置き�
 
 ## 内容
 
-| 章 | 内容 |
-|---|---|
-| 0 | 計算環境を準備する |
-| 1 | Pythonで天体の運動を計算する |
-| 2 | 2体問題を計算する |
-| 3 | 銀河の中で星を動かす |
-| 4 | テスト粒子で円盤銀河を作る |
-| 5 | 2つの銀河を接近させる |
-| 6 | 銀河相互作用を調べる |
-| 7 | 動力学的摩擦で軌道減衰を調べる |
+| 章 | 内容 | 完成版 | 学生版 |
+|---|---|---|---|
+| 0 | 計算環境を準備する | [完成版](notebook/complete/chap00_complete.ipynb) | [学生版](notebook/student/chap00_student.ipynb) |
+| 1 | Pythonで天体の運動を計算する | [完成版](notebook/complete/chap01_complete.ipynb) | [学生版](notebook/student/chap01_student.ipynb) |
+| 2 | 2体問題を計算する | [完成版](notebook/complete/chap02_complete.ipynb) | [学生版](notebook/student/chap02_student.ipynb) |
+| 3 | 銀河の中で星を動かす | [完成版](notebook/complete/chap03_complete.ipynb) | [学生版](notebook/student/chap03_student.ipynb) |
+| 4 | テスト粒子で円盤銀河を作る | [完成版](notebook/complete/chap04_complete.ipynb) | [学生版](notebook/student/chap04_student.ipynb) |
+| 5 | 2つの銀河を接近させる | [完成版](notebook/complete/chap05_complete.ipynb) | [学生版](notebook/student/chap05_student.ipynb) |
+| 6 | 銀河相互作用を調べる | [完成版](notebook/complete/chap06_complete.ipynb) | [学生版](notebook/student/chap06_student.ipynb) |
+| 7 | 動力学的摩擦で軌道減衰を調べる | [完成版](notebook/complete/chap07_complete.ipynb) | [学生版](notebook/student/chap07_student.ipynb) |
 
 ## 配布版について
 
