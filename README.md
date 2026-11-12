@@ -1,12 +1,14 @@
 # 銀河相互作用のシミュレーション
 
-**Pythonで学ぶ制限三体近似** — 馬場淳一
+**Pythonで学ぶ制限三体近似**
 
 Pythonの基礎と、Newtonの運動方程式・中心力・保存則・2体問題を学んだ学生向けの、PDFテキストとJupyter Notebookです。
 
 - [PDFテキスト](textbook.pdf)
 - [完成版Notebook（第0–7章）](notebook/complete)：説明・コード・実行結果付き
 - [学生版Notebook（第0–7章）](notebook/student)：第1–7章は演習用TODO付き
+
+**教材作成：馬場淳一（鹿児島大学/国立天文台)**
 
 ## 使い方
 
