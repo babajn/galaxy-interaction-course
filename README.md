@@ -14,7 +14,7 @@ Pythonの基礎と、Newtonの運動方程式・中心力・保存則・2体問�
 
 古典的な制限三体問題では、互いの重力で運動する2つの点質量天体と、それらの重力を受ける、質量を無視できる第3の天体を考えます。第3の天体から他の2天体への重力の反作用を省くのが「制限」です。
 
-本書の第5・6章では、この考え方を「2つの銀河と1個の星」に対応させ、銀河を形の固定されたPlummerポテンシャル、星をテスト粒子で表します。多数の星を置いても、星同士の重力を省くため、各星の軌道を独立に計算できます。中心軌道を円軌道に限らず、広がった銀河の重力場へ拡張した近似として扱います。第7章では、さらに動力学的摩擦を加えます。
+本書の第5・6章では、この考え方を「2つの銀河と1個の星」に対応させ、銀河を形の固定されたPlummerポテンシャル、星をテスト粒子で表します。多数の星を置いても、星同士の重力を省くため、各星の軌道を独立に計算できます。広がった銀河の重力場へ拡張した近似として扱います。第7章では主銀河を原点に固定し、衛星銀河の中心に動力学的摩擦を加えます。
 
 ## 使い方
 
@@ -54,6 +54,12 @@ bash/zshの場合は、有効化の行を `source .venv/bin/activate` に置き�
 | 5 | 2つの銀河を接近させる | [完成版](notebook/complete/chap05_complete.ipynb) | [実習版](notebook/student/chap05_student.ipynb) |
 | 6 | 銀河相互作用を調べる | [完成版](notebook/complete/chap06_complete.ipynb) | [実習版](notebook/student/chap06_student.ipynb) |
 | 7 | 動力学的摩擦で軌道減衰を調べる | [完成版](notebook/complete/chap07_complete.ipynb) | [実習版](notebook/student/chap07_student.ipynb) |
+
+## 参考文献
+
+- Binney, J. & Tremaine, S. (2008). [*Galactic Dynamics*, 2nd ed.](https://press.princeton.edu/books/paperback/9780691130279/galactic-dynamics) Princeton University Press.
+
+銀河ポテンシャル、恒星の軌道、動力学的摩擦などを詳しく学ぶための参考書です。
 
 ## 利用条件
 
