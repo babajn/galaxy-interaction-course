@@ -58,10 +58,9 @@ bash/zshの場合は、有効化の行を `source .venv/bin/activate` に置き�
 ## 参考文献
 
 - Binney, J. & Tremaine, S. (2008). [*Galactic Dynamics*, 2nd ed.](https://press.princeton.edu/books/paperback/9780691130279/galactic-dynamics) Princeton University Press.
+  銀河ポテンシャル、恒星の軌道、動力学的摩擦などを詳しく学ぶための参考書です。
 
-銀河ポテンシャル、恒星の軌道、動力学的摩擦などを詳しく学ぶための参考書です。
-
-関連する公開教材：
+## 関連する公開教材
 
 - 馬場淳一『[シミュレーション天文学：銀河動力学を中心に](https://github.com/babajn/simulation-stellar-dynamics)』
 - 馬場淳一『[銀河力学で学ぶ数値計算法](https://github.com/babajn/galactic-dynamics-numerical-methods)』
