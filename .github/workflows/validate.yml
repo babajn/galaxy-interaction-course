@@ -8,11 +8,13 @@ permissions:
 jobs:
   notebooks:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       MPLBACKEND: Agg
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -22,42 +24,133 @@ jobs:
         run: |
           python -m pip install -r requirements.txt nbformat nbclient
           python -m ipykernel install --user --name python3
-      - name: Check publication contents and execute standalone notebooks
+      - name: Validate complete and student notebooks
         run: |
           python - <<'PY'
           from pathlib import Path
           from tempfile import TemporaryDirectory
-          import ast
-          import subprocess
+          import ast, copy, json, subprocess
+          import numpy as np
           import nbformat
           from nbclient import NotebookClient
 
           root = Path.cwd()
+          artifacts = root / 'validation-results'
+          artifacts.mkdir(exist_ok=True)
           expected = {'README.md', 'requirements.txt', 'textbook.pdf', '.gitignore', '.github/workflows/validate.yml'}
           expected |= {f'notebook/{kind}/chap{i:02d}_{kind}.ipynb' for kind in ['complete', 'student'] for i in range(8)}
           actual = set(subprocess.check_output(['git', 'ls-files'], text=True).splitlines())
           assert actual == expected, (sorted(actual - expected), sorted(expected - actual))
           assert (root / 'textbook.pdf').read_bytes().startswith(b'%PDF-')
-          total = 0
+          baseline_commit = '7f0fc08e429ffec077f878e55c665d28aef22f4f'
+          ignored = {'version', 'chapter_version', 'outline_version', 'style_version', 'environment', 'numpy_version', 'runtime_seconds_environment_specific', 'elapsed_seconds_this_environment'}
+
+          def compare(old, new, path=''):
+              if isinstance(old, dict):
+                  for key, value in old.items():
+                      if key not in ignored:
+                          assert key in new, (path, key)
+                          compare(value, new[key], path + '/' + key)
+              elif isinstance(old, list):
+                  assert len(old) == len(new), path
+                  for i, (a, b) in enumerate(zip(old, new)):
+                      compare(a, b, path + '/' + str(i))
+              elif isinstance(old, (int, float)) and not isinstance(old, bool):
+                  np.testing.assert_allclose(new, old, rtol=2e-8, atol=1e-10, err_msg=path)
+              else:
+                  assert new == old, (path, old, new)
+
+          report = []
           for chapter in range(8):
-              for kind in ['complete', 'student']:
-                  path = root / 'notebook' / kind / f'chap{chapter:02d}_{kind}.ipynb'
-                  notebook = nbformat.read(path, as_version=4)
+              tag = f'chap{chapter:02d}'
+              complete = nbformat.read(root / f'notebook/complete/{tag}_complete.ipynb', as_version=4)
+              student = nbformat.read(root / f'notebook/student/{tag}_student.ipynb', as_version=4)
+              for notebook in [complete, student]:
                   nbformat.validate(notebook)
                   for cell in notebook.cells:
                       if cell.cell_type == 'code':
                           ast.parse(cell.source)
-                  if kind == 'student':
-                      continue
-                  # No author sources or previous chapter output exist in this directory.
+              assert len(complete.cells) == len(student.cells)
+              optional_indices = [i for i, c in enumerate(complete.cells) if 'optional-exercise' in c.metadata.get('tags', [])]
+              for i, cell in enumerate(student.cells):
+                  if cell.cell_type == 'code' and 'NotImplementedError' in cell.source and i not in optional_indices:
+                      cell.source = complete.cells[i].source
+              standard = None
+              for kind, notebook in [('complete', complete), ('student-core', student)]:
                   with TemporaryDirectory() as work:
-                      NotebookClient(notebook, timeout=600, kernel_name='python3', allow_errors=False, resources={'metadata': {'path': work}}).execute()
-                      cells = [c for c in notebook.cells if c.cell_type == 'code']
-                      assert all(c.execution_count is not None for c in cells)
-                      assert not any(o.output_type == 'error' for c in cells for o in c.outputs)
+                      if kind == 'student-core':
+                          # Leave optional TODOs untouched and skip their entire cells.
+                          for i in optional_indices:
+                              notebook.cells[i].metadata.setdefault('tags', []).append('skip-execution')
+                      client = NotebookClient(notebook, timeout=600, kernel_name='python3', allow_errors=False, resources={'metadata': {'path': work}})
+                      client.execute()
+                      code = [c for c in notebook.cells if c.cell_type == 'code' and 'skip-execution' not in c.metadata.get('tags', [])]
+                      assert all(c.execution_count is not None for c in code)
+                      assert not any(o.output_type == 'error' for c in code for o in c.outputs)
+                      warnings = [''.join(o.text) for c in code for o in c.outputs if o.output_type == 'stream' and o.name == 'stderr']
+                      assert not warnings, warnings
+                      pngs = sum('image/png' in o.get('data', {}) for c in code for o in c.outputs)
                       if chapter:
-                          assert (Path(work) / 'output' / f'chap{chapter:02d}' / 'data' / 'validation.json').is_file()
-                      total += len(cells)
-                      print(f'Chapter {chapter}: {len(cells)} code cells passed', flush=True)
-          print(f'All 8 complete notebooks passed: {total} code cells.', flush=True)
+                          assert pngs > 0, (tag, kind, 'missing plots')
+                          data = Path(work) / 'output' / tag / 'data'
+                          result = json.loads((data / 'validation.json').read_text())
+                          exercises = json.loads((data / 'exercise_validation.json').read_text())
+                          if kind == 'complete':
+                              standard = copy.deepcopy(result)
+                              merged = dict(result)
+                              for exercise in exercises['results'].values():
+                                  merged.update(exercise)
+                              old = json.loads(subprocess.check_output(['git', 'show', f'{baseline_commit}:code/{tag}/data/validation.json'], text=True))
+                              compare(old, merged, tag)
+                              assert len(exercises['results']) == len(optional_indices)
+                              (artifacts / f'{tag}_validation.json').write_text(json.dumps(result, indent=2))
+                              (artifacts / f'{tag}_exercise_validation.json').write_text(json.dumps(exercises, indent=2))
+                          else:
+                              compare(standard, result, tag + '/student')
+                              assert exercises == {'status': 'not_run', 'results': {}}, exercises
+                          # Run the actual initialization cell twice, with stale memory and disk results in between.
+                          setup = next(c.source for c in notebook.cells if c.cell_type == 'code' and 'exercise_results = {}' in c.source)
+                          namespace = {'__name__': '__main__'}
+                          import os
+                          old_cwd = Path.cwd()
+                          os.chdir(work)
+                          try:
+                              exec(setup, namespace)
+                              namespace['exercise_results']['stale'] = {'value': 99}
+                              namespace['save_exercise_results']()
+                              exec(setup, namespace)
+                              assert namespace['exercise_results'] == {}
+                              assert json.loads((data / 'exercise_validation.json').read_text()) == {'status': 'not_run', 'results': {}}
+                              for i in optional_indices:
+                                  src = complete.cells[i].source
+                                  prefix = src[:src.index('save_exercise_results()') + len('save_exercise_results()')]
+                                  key = next(line.split(': ', 1)[1] for line in src.splitlines() if line.startswith('# OPTIONAL EXERCISE:'))
+                                  namespace['exercise_results'][key] = {'old': True}
+                                  namespace['save_exercise_results']()
+                                  exec(prefix, namespace)
+                                  assert key not in json.loads((data / 'exercise_validation.json').read_text())['results']
+                          finally:
+                              os.chdir(old_cwd)
+                      if kind == 'complete':
+                          nbformat.write(notebook, artifacts / f'{tag}_complete.ipynb')
+                      report.append({'chapter': chapter, 'kind': kind, 'executed_cells': len(code), 'pngs': pngs})
+                      print(report[-1], flush=True)
+              if chapter == 7:
+                  # Verify dimensionless diagnostics when the scale length is not 1 kpc.
+                  i = optional_indices[0]
+                  source = complete.cells[i].source.replace('sat_rd = 1.0', 'sat_rd = 2.0')
+                  assert source != complete.cells[i].source
+                  source += '\nassert sat_rd == 2.0\nassert np.isclose(sat_maxdiff, np.max(np.linalg.norm(sat_diff, axis=2)) / sat_rd)\nassert np.isclose(sat_rmsdiff, np.sqrt(np.mean(np.sum(sat_diff**2, axis=2))) / sat_rd)\n'
+                  probe = copy.deepcopy(complete)
+                  probe.cells[i].source = source
+                  with TemporaryDirectory() as work:
+                      NotebookClient(probe, timeout=600, kernel_name='python3', resources={'metadata': {'path': work}}).execute()
+                  print('Chapter 7: Rd = 2 kpc normalization passed', flush=True)
+          (artifacts / 'report.json').write_text(json.dumps(report, indent=2))
+          print('All complete notebooks, student core notebooks, regression values and reset tests passed.', flush=True)
           PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: executed-notebooks-and-validation
+          path: validation-results/
+          retention-days: 14
