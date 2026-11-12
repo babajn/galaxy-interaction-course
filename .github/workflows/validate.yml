@@ -1525,6 +1525,17 @@ jobs:
 
 
           def compare(old, new, path=''):
+              if path == 'chap05/self_ratios':
+                  # A quotient inherits the allowed errors in both convergence differences.
+                  # Checking it with the tolerance for each operand alone is too strict.
+                  differences = np.asarray(baseline['chap05']['self_convergence'])[:, 4]
+                  delta = 1e-10 + 2e-8 * np.abs(differences)
+                  lower = (differences[:-1] - delta[:-1]) / (differences[1:] + delta[1:])
+                  upper = (differences[:-1] + delta[:-1]) / (differences[1:] - delta[1:])
+                  assert np.all(differences[1:] > delta[1:])
+                  assert len(new) == len(old)
+                  assert np.all(np.asarray(new) >= lower) and np.all(np.asarray(new) <= upper), (path, new, lower, upper)
+                  return
               if isinstance(old, dict):
                   for key, value in old.items():
                       if key not in ignored:
@@ -1628,17 +1639,20 @@ jobs:
                           data = Path(work) / 'output' / tag / 'data'
                           result = json.loads((data / 'validation.json').read_text())
                           exercises = json.loads((data / 'exercise_validation.json').read_text())
+                          if chapter == 5:
+                              differences = np.asarray(result['self_convergence'])[:, 4]
+                              np.testing.assert_allclose(result['self_ratios'], differences[:-1] / differences[1:], rtol=1e-13, atol=0)
                           if kind == 'complete':
                               standard = copy.deepcopy(result)
                               merged = dict(result)
                               for exercise in exercises['results'].values():
                                   assert not (set(exercise) & set(result)), (tag, 'exercise values leaked into standard result')
                                   merged.update(exercise)
+                              (artifacts / f'{tag}_validation.json').write_text(json.dumps(result, indent=2))
+                              (artifacts / f'{tag}_exercise_validation.json').write_text(json.dumps(exercises, indent=2))
                               compare(baseline[tag], merged, tag)
                               assert set(exercises['results']) == expected_keys
                               assert exercises['status'] == ('completed' if optional else 'not_applicable')
-                              (artifacts / f'{tag}_validation.json').write_text(json.dumps(result, indent=2))
-                              (artifacts / f'{tag}_exercise_validation.json').write_text(json.dumps(exercises, indent=2))
                           else:
                               compare(standard, result, tag + '/' + kind)
                               assert set(standard) == set(result)
@@ -1688,6 +1702,7 @@ jobs:
           print('All 8 complete, 8 student-core, 8 student Run All, regression and reset checks passed.', flush=True)
           PY
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: executed-notebooks-and-validation
           path: validation-results/
