@@ -1524,11 +1524,15 @@ jobs:
           ignored = {'version', 'chapter_version', 'outline_version', 'style_version', 'environment', 'numpy_version', 'runtime_seconds_environment_specific', 'elapsed_seconds_this_environment'}
 
 
+          ratio_sources = {'chap05/self_ratios': ('chap05', 'self_convergence', 4), 'chap07/df_ratios': ('chap07', 'df_self', 2)}
+
+
           def compare(old, new, path=''):
-              if path == 'chap05/self_ratios':
+              if path in ratio_sources:
                   # A quotient inherits the allowed errors in both convergence differences.
                   # Checking it with the tolerance for each operand alone is too strict.
-                  differences = np.asarray(baseline['chap05']['self_convergence'])[:, 4]
+                  chapter_tag, source_key, column = ratio_sources[path]
+                  differences = np.asarray(baseline[chapter_tag][source_key])[:, column]
                   delta = 1e-10 + 2e-8 * np.abs(differences)
                   lower = (differences[:-1] - delta[:-1]) / (differences[1:] + delta[1:])
                   upper = (differences[:-1] + delta[:-1]) / (differences[1:] - delta[1:])
@@ -1639,9 +1643,10 @@ jobs:
                           data = Path(work) / 'output' / tag / 'data'
                           result = json.loads((data / 'validation.json').read_text())
                           exercises = json.loads((data / 'exercise_validation.json').read_text())
-                          if chapter == 5:
-                              differences = np.asarray(result['self_convergence'])[:, 4]
-                              np.testing.assert_allclose(result['self_ratios'], differences[:-1] / differences[1:], rtol=1e-13, atol=0)
+                          for ratio_path, (chapter_tag, source_key, column) in ratio_sources.items():
+                              if tag == chapter_tag:
+                                  differences = np.asarray(result[source_key])[:, column]
+                                  np.testing.assert_allclose(result[ratio_path.split('/')[1]], differences[:-1] / differences[1:], rtol=1e-13, atol=0)
                           if kind == 'complete':
                               standard = copy.deepcopy(result)
                               merged = dict(result)
