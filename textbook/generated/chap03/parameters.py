@@ -1,9 +1,0 @@
-KM_S_TO_KPC_GYR = 1.0227121650537077
-G = 4.30091e-6 * KM_S_TO_KPC_GYR**2  # kpc^3 / (Msun Gyr^2)
-mass = 1.0e11                      # 球全体の質量 [Msun]
-a = 3.0                            # Plummerスケール長 [kpc]
-mu = G * mass
-r_tab = 5.0 * a                     # 質量表の範囲 [kpc]。球の外縁ではありません。
-n_mass = 256                       # 台形則の区間数。分点数はn_mass + 1です。
-root_xtol = 1.0e-8                  # 二分法の半区間幅の許容値 [kpc]
-r0 = 2.0 * a                       # 軌道の初期半径 [kpc]

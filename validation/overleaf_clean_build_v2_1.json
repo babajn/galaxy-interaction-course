@@ -1,8 +1,0 @@
-{
-  "pages": 177,
-  "compiler": "XeLaTeX",
-  "main_document": "main.tex",
-  "clean_local_build": true,
-  "text_equal_to_integrated_pdf": true,
-  "server_tested": false
-}

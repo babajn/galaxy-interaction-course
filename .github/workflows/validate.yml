@@ -1,4 +1,4 @@
-name: Validate teaching materials
+name: Validate published notebooks
 on:
   push:
   pull_request:
@@ -6,9 +6,9 @@ on:
 permissions:
   contents: read
 jobs:
-  validate:
+  notebooks:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     env:
       MPLBACKEND: Agg
     steps:
@@ -17,30 +17,47 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: code/requirements.txt
-      - name: Check distributed sources before regeneration
-        run: python code/check_sources.py
-      - name: Test regeneration helpers
-        run: python code/test_build_tools.py
-      - name: Install dependencies and kernel
+          cache-dependency-path: requirements.txt
+      - name: Install notebook environment
         run: |
-          python -m pip install -r code/requirements.txt
+          python -m pip install -r requirements.txt nbformat nbclient
           python -m ipykernel install --user --name python3
-      - name: Execute all chapters and independent numerical tests
-        run: python code/rebuild.py --execute --test
-      - name: Check regenerated sources
-        run: python code/check_sources.py
-      - name: Check rebuilding chapter zero retains execution output
+      - name: Check publication contents and execute standalone notebooks
         run: |
-          python code/rebuild.py --chapters 0
-          python code/check_sources.py
-      - name: Retain new execution evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: execution-evidence
-          path: |
-            validation/*_build.log
-            validation/*_tests.log
-            validation/execution_report.json
-            code/chap*/data/independent_tests.json
+          python - <<'PY'
+          from pathlib import Path
+          from tempfile import TemporaryDirectory
+          import ast
+          import subprocess
+          import nbformat
+          from nbclient import NotebookClient
+
+          root = Path.cwd()
+          expected = {'README.md', 'requirements.txt', 'textbook.pdf', '.gitignore', '.github/workflows/validate.yml'}
+          expected |= {f'notebook/{kind}/chap{i:02d}_{kind}.ipynb' for kind in ['complete', 'student'] for i in range(8)}
+          actual = set(subprocess.check_output(['git', 'ls-files'], text=True).splitlines())
+          assert actual == expected, (sorted(actual - expected), sorted(expected - actual))
+          assert (root / 'textbook.pdf').read_bytes().startswith(b'%PDF-')
+          total = 0
+          for chapter in range(8):
+              for kind in ['complete', 'student']:
+                  path = root / 'notebook' / kind / f'chap{chapter:02d}_{kind}.ipynb'
+                  notebook = nbformat.read(path, as_version=4)
+                  nbformat.validate(notebook)
+                  for cell in notebook.cells:
+                      if cell.cell_type == 'code':
+                          ast.parse(cell.source)
+                  if kind == 'student':
+                      continue
+                  # No author sources or previous chapter output exist in this directory.
+                  with TemporaryDirectory() as work:
+                      NotebookClient(notebook, timeout=600, kernel_name='python3', allow_errors=False, resources={'metadata': {'path': work}}).execute()
+                      cells = [c for c in notebook.cells if c.cell_type == 'code']
+                      assert all(c.execution_count is not None for c in cells)
+                      assert not any(o.output_type == 'error' for c in cells for o in c.outputs)
+                      if chapter:
+                          assert (Path(work) / 'output' / f'chap{chapter:02d}' / 'data' / 'validation.json').is_file()
+                      total += len(cells)
+                      print(f'Chapter {chapter}: {len(cells)} code cells passed', flush=True)
+          print(f'All 8 complete notebooks passed: {total} code cells.', flush=True)
+          PY

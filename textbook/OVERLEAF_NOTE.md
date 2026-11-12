@@ -1,7 +1,0 @@
-# Overleafでの組版（全章改訂v2.0）
-
-専用のOverleaf用ZIPを新規プロジェクトへ読み込み、CompilerをXeLaTeX、Main documentをmain.texにします。本文用ファイルはZIPのルートに配置しています。
-
-共通のTikZキー `textbook diagram` などはpreamble.texに定義されています。古いpreambleへ章だけを上書きせず、preamble・chapters・generated・figures・commandsをまとめて更新してください。
-
-本体の数値計算は既に実行済みで、Pythonの実行はOverleafでは不要です。参照が更新されないときはキャッシュを消して再コンパイルします。ローカルXeLaTeXの検証結果を同梱していますが、Overleafのサーバー上での実動作・リソース上限までは本作業では確認していません。

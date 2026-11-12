@@ -1,2 +1,0 @@
-# 共通の実行依存を使います。
--r ../requirements.txt

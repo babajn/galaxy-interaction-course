@@ -1,0 +1,5 @@
+# Notebook実行用。TeX編集・PDF再生成の依存パッケージは含みません。
+numpy>=1.24,<3
+matplotlib>=3.7,<4
+jupyterlab>=4,<5
+ipykernel>=6

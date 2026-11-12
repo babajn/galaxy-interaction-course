@@ -1,9 +1,0 @@
-n_periods = 100
-steps_per_period = 100
-n_long = n_periods * steps_per_period
-t_long, h_long_lf = integrate_leapfrog(acceleration_kepler, state0, n_periods * period, n_long, mu)
-_, h_long_rk4 = integrate(rhs_kepler, rk4_step, state0, n_periods * period, n_long, mu)
-_, e_long_lf, l_long_lf = diagnostics(h_long_lf, mu)
-_, e_long_rk4, l_long_rk4 = diagnostics(h_long_rk4, mu)
-signed_lf = (e_long_lf - e_long_lf[0]) / abs(e_long_lf[0])
-signed_rk4 = (e_long_rk4 - e_long_rk4[0]) / abs(e_long_rk4[0])

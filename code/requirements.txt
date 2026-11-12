@@ -1,9 +1,0 @@
-# 実習の実行依存（NumPy 2.xを含む。実測環境はvalidation/execution_report.json）
-numpy>=1.24,<3
-matplotlib>=3.7,<4
-jupyterlab>=4,<5
-ipykernel>=6
-nbformat>=5.9
-nbclient>=0.8
-# 以下は章別PDFを統合PDFから抽出する編集作業にのみ必要です。
-PyMuPDF>=1.23
