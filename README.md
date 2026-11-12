@@ -62,8 +62,8 @@ bash/zshの場合は、有効化の行を `source .venv/bin/activate` に置き�
 
 ## 関連する公開教材
 
-- 馬場淳一『[シミュレーション天文学：銀河動力学を中心に](https://github.com/babajn/simulation-stellar-dynamics)』
-- 馬場淳一『[銀河力学で学ぶ数値計算法](https://github.com/babajn/galactic-dynamics-numerical-methods)』
+- 馬場淳一『[シミュレーション天文学：銀河動力学を中心に](https://github.com/babajn/simulation-stellar-dynamics)』（2024年度 総研大講義資料）
+- 馬場淳一『[銀河力学で学ぶ数値計算法](https://github.com/babajn/galactic-dynamics-numerical-methods)』（2026年度 鹿児島大学物理宇宙セミナー資料）
 
 ## 利用条件
 
