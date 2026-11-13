@@ -8,6 +8,8 @@ Pythonの基礎と、Newtonの運動方程式・中心力・保存則・2体問�
 - [完成版Notebook（第0–7章）](notebook/complete)：説明・コード・実行結果付き
 - [実習版Notebook（第0–7章）](notebook/student)：第1–7章は演習用TODO付き
 
+PDFの改訂識別：公開版は [コミット `827659b`](https://github.com/babajn/galaxy-interaction-course/commit/827659bea114ef5dab43359f9fff4073e18cb3d4) の v2.7.2 相当です（表紙の表記は「公開改訂版 v2.7.1、2026年11月13日」のままです）。
+
 **教材作成：馬場淳一（鹿児島大学/国立天文台）**
 
 ## 本書でいう「制限三体近似」
